@@ -10,16 +10,17 @@ module.exports = {
     },
   },
   jwt: {
-    secret: process.env.JWT_SECRET_KEY || "",
+    secret:
+    process.env.JWT_SECRET_KEY || "8x978w&*(@&#(@(#____SDKHGFYGDBXHAG*^@^@@_!_++!+@(*(=01==`0asdfnaicyiuayb(*^*7nsac982h)=0-39",
   },
   mail: {
     default: {
-      host: "",
+      host: "smtp.gmail.com",
       port: 587,
       secure: false,
       auth: {
-        user: "",
-        pass: "",
+        user: "frana7738@gmail.com",
+        pass: "pdbposcdrrnhoqao",
       },
     },
     gmail: {},

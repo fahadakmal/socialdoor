@@ -1,6 +1,7 @@
 const router = require("express").Router();
-const user_controller = require("../../controllers/user").user_controller;
+const user_controller = require("../../controllers/user.router").user_controller;
 const passport = require("passport");
+
 
 /**
  * ->staging
@@ -15,6 +16,10 @@ const passport = require("passport");
  *    password,
  *    password_confirm
  */
+router.get('/test5', function (req, res) {
+   
+  res.send('Everything working!')
+})
 router.post("/register", user_controller.register);
 
 /**

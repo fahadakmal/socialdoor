@@ -2,6 +2,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+
 //validators
 const validateRegisterInput = require("../../validations/register.validation");
 const validateLoginInput = require("../../validations/login.validation");
@@ -17,8 +18,12 @@ const email_verification_email = require("../../templates/email/verifyemail");
 const mailer = require("../../helper/mail.helper");
 
 exports.register = async (req, res) => {
+
   try {
+    
     const User = req.models.user_model;
+    console.log('i am in fun');
+    console.log('everything good');
     const config = req.config;
     //validating inputs using register validations rules
     const { errors, isValid } = validateRegisterInput(req.body);
@@ -45,9 +50,15 @@ exports.register = async (req, res) => {
             phone: req.body.phone,
             email: req.body.email,
             password: req.body.password,
+            address:req.body.address,
+            dob:req.body.dob,
+            gender:req.body.gender,
             otp: [{ otp: otp, type: "email" }],
           });
           // Hashing the password of new user using bcrypt
+          console.log(req.body.first_name);
+          console.log(req.body.password)
+          console.log(req.body.password)
           bcrypt.hash(newUser.password, 10, (err, hash) => {
             if (err) console.error("There was an error", err);
             else {
@@ -72,10 +83,10 @@ exports.register = async (req, res) => {
         }
       })
       .catch((err) =>
-        res.status(500).json({ server: "unknown error occured" })
+        res.status(500).json({ server: "unknown error occured",err:err })
       );
-  } catch {
-    res.status(500).json({ server: "unknown error occured" });
+  } catch (err){
+    res.status(500).json({ server: "unknown error occured"});
   }
 };
 
@@ -204,6 +215,8 @@ exports.request_email_verifcation_token = async (req, res) => {
 };
 
 exports.verify_email = (req, res) => {
+  console.log(req.params.otp);
+  console.log(req.params.otp);
   try {
     const User = req.models.user_model;
     const user = req.user;
