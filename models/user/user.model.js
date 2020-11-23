@@ -13,6 +13,8 @@ const address = new Schema({
   coordinates: { type: String },
 });
 
+
+
 const otp_value_schema = new Schema({
   type: {type:String, default: "general"},
   otp: {type: String, require: true},

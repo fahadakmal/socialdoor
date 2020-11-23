@@ -22,6 +22,7 @@ exports.register = async (req, res) => {
   try {
     
     const User = req.models.user_model;
+    console.log(req.body)
     console.log('i am in fun');
     console.log('everything good');
     const config = req.config;
@@ -44,13 +45,14 @@ exports.register = async (req, res) => {
         } else {
           let otp = helper.create_otp(6, "numeric");
           // creating new user using the User Model
+          console.log(req.body.address);
           const newUser = new User({
             first_name: req.body.first_name,
             last_name: req.body.last_name,
             phone: req.body.phone,
             email: req.body.email,
             password: req.body.password,
-            address:req.body.address,
+            address:[req.body.address],
             dob:req.body.dob,
             gender:req.body.gender,
             otp: [{ otp: otp, type: "email" }],
