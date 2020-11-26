@@ -39,7 +39,6 @@ router.post('reques')
 router.post('getStories')
 router.post('getNotifications')
 router.post('getNotificationDetail')
-
 router.post('/updateUser')
 router.post('/followUser')
 router.post('/unFollowUser')
@@ -57,14 +56,12 @@ router.get('userLanguage')
 router.get('userCurrency')
 router.post('userCurrency')
 router.post('help')
-
 router.post('/messagesNotification')
 router.post('/reminderNotification')
 router.post('/promotionAndTipsNotification')
 router.post('/policyAndCommunityNotification')
 router.post('/accountAndSupportNotification')
 router.post('/isPremium')
-
 router.post('forgetPassword')
 
 
