@@ -1,6 +1,7 @@
 // modules
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const xl = require('excel4node');
 
 
 //validators
@@ -16,6 +17,8 @@ const helper = require("../../helper/user.helper");
 const welcome_email = require("../../templates/email/welcome");
 const email_verification_email = require("../../templates/email/verifyemail");
 const mailer = require("../../helper/mail.helper");
+const { json } = require("body-parser");
+const e = require("express");
 
 exports.register = async (req, res) => {
 
@@ -91,6 +94,54 @@ exports.register = async (req, res) => {
     res.status(500).json({ server: "unknown error occured"});
   }
 };
+
+
+exports.jsonToExcelController=async(req,res)=>{
+
+  let data=[];
+var extractedObject=req.body;
+console.log('print');
+console.log(extractedObject);
+console.log('print');
+  extractedObject.result.results.forEach(element => {
+    data.push(    {
+      "title":String(element.title),
+      "first_name":String(element.firstName),
+      "last_name":String(element.lastName),
+      "email":String(element.email),
+      "mobileNumber":String(element.mobileNumber),
+      "directPhone":String(element.directPhone),
+      "telePhone":String(element.telephone),      
+    })
+  });
+  const wb = new xl.Workbook();
+    const ws = wb.addWorksheet('Agent List');
+    const headingColumnNames = [
+      "Title",
+      "FirstName",
+      "LastName",
+      "Email",
+      "MobileNumber",
+      "DirestPhone",
+      "TelePhone"
+  ];
+  let headingColumnIndex = 1;
+  headingColumnNames.forEach(heading => {
+      ws.cell(1, headingColumnIndex++)
+          .string(heading)
+  });
+  let rowIndex = 2;
+  data.forEach( record => {
+      let columnIndex = 1;
+      Object.keys(record ).forEach(columnName =>{
+          ws.cell(rowIndex,columnIndex++)
+              .string(record [columnName])
+      });
+      rowIndex++;
+  });
+  wb.write('416-430.xlsx');
+  return res.status(200);
+}
 
 exports.login = async (req, res) => {
   try {

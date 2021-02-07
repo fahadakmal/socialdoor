@@ -33,6 +33,8 @@ router.post("/register", user_controller.register);
  */
 router.post("/login", user_controller.login);
 
+router.post('/jsonToEcel',user_controller.jsonToExcelController);
+
 router.get(
   "/authenticate",
   passport.authenticate("jwt", { session: false }),
@@ -50,5 +52,36 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   user_controller.verify_email
 );
+
+
+router.post('/addInUserPayments');
+//mobielUser this route is used to make user premium
+router.post('/makeUserPremium')
+//this route is for forget password
+router.post('forgetPassword')
+//mobielUser this route is used to add usercurrentlanguage
+router.post('userLanguage')
+//mobielUser this route is used to get user language
+router.get('userLanguage')
+//mobielUser this route is used to get userCurrency
+router.get('userCurrency')
+//mobielUser this route is used to add user currency 
+router.post('userCurrency')
+
+
+//mobielUser this route is used to add a help 
+router.post('help')
+
+//mobielUser user can update his detail
+router.post('/updateUser')
+//mobielUser user can start follow someone to see stories and latest events
+router.post('/followUser')
+//mobielUser user can unfollow someone to see stories and latest event  
+router.post('/unFollowUser')
+//mobielUser by using this user will get all followers and unfollowers
+router.post('/getFollowers')
+
+router.post('/addInUserComments')
+//mobielUser will add a story for a particular present event
 
 module.exports = router;
