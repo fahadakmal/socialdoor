@@ -1,23 +1,10 @@
-const app=require('express');
-const router=app.router();
+const router = require("express").Router();
 const passport = require("passport");
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//mobileUser will host an event by using this route
+router.get('/addEvent');
 
 
 //mobileUser will get all events for all particular area nad category and price range and also for particular date
@@ -26,8 +13,7 @@ router.get('/getEvents');
 //mobileUser rememberes
 router.post('/updateEvents')
 
-//mobileUser will host an event by using this route
-router.get('/addEvents');
+
 
 //mobileUser will get all favorites route by using this route
 router.get('/getFavoriteEvents');
