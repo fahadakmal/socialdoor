@@ -269,7 +269,6 @@ exports.request_email_verifcation_token = async (req, res) => {
 
 exports.verify_email = (req, res) => {
   console.log(req.params.otp);
-  console.log(req.params.otp);
   try {
     const User = req.models.user_model;
     const user = req.user;
@@ -277,6 +276,7 @@ exports.verify_email = (req, res) => {
     const otps = req.user.otp;
     console.log(otp);
     email = user.email;
+    console.log(email);
     _id = user.id;
     is_email_verified = user.is_email_verified;
     if (is_email_verified)
@@ -286,9 +286,22 @@ exports.verify_email = (req, res) => {
 
     const found = Boolean(
       otps.filter(
-        (o) =>
+        (o) =>{
+          console.log(o);
+          if( o.type === "email" ){
+            console.log('email matched');
+          }
+          if(o.otp == otp )
+          {
+            console.log('otp matched');
+          }
+          if(new Date(o.expires_in) > new Date())
+          {
+            console.log('date is greater');
+          }
           o.type === "email" && o.otp == otp && new Date(o.expires_in) > new Date()
-      ).length
+        }
+      )
     );
     console.log(found)
 
@@ -318,3 +331,7 @@ exports.verify_email = (req, res) => {
     res.status(500).json({ server: "unknown error occured" });
   }
 };
+
+
+//to recover password
+

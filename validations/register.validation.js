@@ -170,8 +170,27 @@ module.exports = function validateRegisterInput(data) {
     errors.password_confirm = "Password is required";
   }
 
+  //check if dob is not is not provided
+  if (Validator.isEmpty(data.dob)) {
+    errors.dob = "Date of Birth is required";
+  }
+
+  //check if gender is not provided
+  if (Validator.isEmpty(data.dob)) {
+    errors.gender = "gender is required";
+  }
+  //
+
+
   return {
     errors,
     isValid: isEmpty(errors),
   };
 };
+
+
+
+
+
+
+
