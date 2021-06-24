@@ -21,6 +21,14 @@ const otp_value_schema = new Schema({
   expires_in: {type: Date, default:new Date(Date.now()+(60000*60*24))}
 })
 
+
+const resetPasswordTokenSchema= new Schema({
+  token: {type: String, require: true},
+  expires_in: {type: Date, default:new Date(Date.now()+(60000*60*24))}
+})
+
+
+
 // const otp_schema = new Schema({
 //   phone: otp_value_schema,
 //   email: otp_value_schema,
@@ -56,6 +64,8 @@ const user_schema = new Schema({
   created_on: { type: Date, default: Date() },
   updated_on: { type: Date, default: Date() },
   language: {type: String, default: "english"},
+  resstPasswordToken:{type : String,required:false},
+  resetPasswordExpires:{ type: Date,required:false },
   otp: [otp_value_schema]
 });
 

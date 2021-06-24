@@ -16,6 +16,7 @@ const validateLoginInput = require("../../validations/login.validation");
 const helper = require("../../helper/user.helper");
 const welcome_email = require("../../templates/email/welcome");
 const email_verification_email = require("../../templates/email/verifyemail");
+
 const mailer = require("../../helper/mail.helper");
 const { json } = require("body-parser");
 const e = require("express");
@@ -334,4 +335,133 @@ exports.verify_email = (req, res) => {
 
 
 //to recover password
+// ===PASSWORD RECOVER AND RESET
 
+// @route POST api/auth/recover
+// @desc Recover Password - Generates token and Sends password reset email
+// @access Public
+exports.recover = (req, res) => {
+  
+  let User = req.models.user_model;
+  let config=req.config;
+
+  User.findOne({email: req.body.email})
+      .then(user => {
+          if (!user) return res.status(401).json({message: 'The email address ' + req.body.email + ' is not associated with any account. Double-check your email address and try again.'});
+              //   genrating if user already exist
+              if (user) {
+              let   email=user.email;
+              let expirytoday = new Date();
+              expirytoday.setHours(expirytoday.getHours() + 4);
+              let _id=user.id;
+                let token = helper.create_otp(6, "numeric");
+                User.findOneAndUpdate(
+                  { _id },
+                  { resetPasswordToken: token,resetPasswordExpires:expirytoday}
+                  ).then((user)=>{
+                    console.log(user);
+                    if (user) {
+                      console.log(email);
+                      mailer(
+                        "Please Reset your password",
+                        [email],
+                        email_verification_email(email, token),
+                        config.mail.default
+                      )
+                        .then(() => {
+                          res
+                            .status(200)
+                            .json({ success: true, message: "password token email sent" });
+                        })
+                        .catch((err) =>
+                        {
+                          console.log(err);
+                          res
+                          .status(400)
+                          .json({ email_verification: "can't send token email" })
+                        }
+                        
+                        );
+                    } else {
+                      res
+                        .status(400)
+                        .json({ email_verification: "user not exist with given email" });
+                    }
+                    
+
+                  }
+
+
+                  ).catch((err)=>{
+                    console.log(err);
+                    res.status(400).json({
+                      email_verification: "can't verify email for " + email,
+                    });
+                  });}
+      })
+      .catch(err => res.status(500).json({message: err.message}));
+};
+
+// @route POST api/auth/reset
+// @desc Reset Password - Validate password reset token and shows the password reset view
+// @access Public
+exports.reset = (req, res) => {
+  let User = req.models.user_model;
+  let config=req.config;
+  
+  console.log(req.params.token);
+  User.findOne({resetPasswordToken: req.params.token,resetPasswordExpires: {$gt: Date.now()}})
+      .then((user) => {
+          if (!user) return res.status(401).json({message: 'Password reset token is invalid or has expired.'});
+
+          //Redirect user to form with the email address
+          res
+          .status(200)
+          .json({ success: true,  user});
+          // res.render('reset', {user});
+      })
+      .catch(err => res.status(500).json({message: err.message}));
+};
+
+
+// @route POST api/auth/reset
+// @desc Reset Password
+// @access Public
+exports.resetPassword = (req, res) => {
+  let User = req.models.user_model;
+  let config=req.config;
+  console.log(req.params.token);
+  User.findOne({resetPasswordToken: req.params.token,resetPasswordExpires: {$gt: Date.now()}})
+      .then((user) => {
+        console.log(user);
+          if (!user) return res.status(401).json({message: 'Password reset token is invalid or has expired.'});
+
+          //Set the new password
+          user.password = req.body.password;
+          user.resetPasswordToken = undefined;
+          user.resetPasswordExpires = undefined;
+
+          // Save
+          user.save((err) => {
+              if (err) return res.status(500).json({message: err.message});
+console.log('successflyy');
+res
+.status(200)
+.json({ success: true,  message:"successfully password reset"});
+          //     // send email
+          //     const mailOptions = {
+          //         to: user.email,
+          //         from: process.env.FROM_EMAIL,
+          //         subject: "Your password has been changed",
+          //         text: `Hi ${user.username} \n 
+          //         This is a confirmation that the password for your account ${user.email} has just been changed.\n`
+          //     };
+
+          //     sgMail.send(mailOptions, (error, result) => {
+          //         if (error) return res.status(500).json({message: error.message});
+
+          //         res.status(200).json({message: 'Your password has been updated.'});
+          //     });
+          });
+      });
+};
