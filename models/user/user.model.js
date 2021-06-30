@@ -64,7 +64,7 @@ const user_schema = new Schema({
   created_on: { type: Date, default: Date() },
   updated_on: { type: Date, default: Date() },
   language: {type: String, default: "english"},
-  resstPasswordToken:{type : String,required:false},
+  resetPasswordToken:{type : String,required:false},
   resetPasswordExpires:{ type: Date,required:false },
   otp: [otp_value_schema]
 });

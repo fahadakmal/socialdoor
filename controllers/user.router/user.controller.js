@@ -355,13 +355,14 @@ exports.recover = (req, res) => {
               expirytoday.setHours(expirytoday.getHours() + 4);
               let _id=user.id;
                 let token = helper.create_otp(6, "numeric");
+                console.log(token);
                 User.findOneAndUpdate(
                   { _id },
                   { resetPasswordToken: token,resetPasswordExpires:expirytoday}
                   ).then((user)=>{
                     console.log(user);
                     if (user) {
-                      console.log(email);
+                      console.log(user);
                       mailer(
                         "Please Reset your password",
                         [email],
