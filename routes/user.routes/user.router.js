@@ -65,6 +65,11 @@ router.post('/reset/:token', [
   // check('confirmPassword', 'Passwords do not match').custom((value, {req}) => (value === req.body.password)),
 ], user_controller.resetPassword);
 
+//sociallogin
+router.post('/socialLoginWithFacebook',user_controller.socialLoginWithFacebook);
+router.post('/socialLoginWithGoogle',user_controller.socialLoginWithGoogle)
+
+
 
 
 router.post('/addInUserPayments');
