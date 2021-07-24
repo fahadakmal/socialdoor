@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const user_controller = require("../../controllers/user.router").user_controller;
+const {user_controller,tags_controller,event_category_controller} = require("../../controllers/user.router");
 const passport = require("passport");
 
 
@@ -31,22 +31,28 @@ router.post("/register", user_controller.register);
  *    email,
  *    password
  */
+
+//for login
 router.post("/login", user_controller.login);
 
+//for excel to json
 router.post('/jsonToEcel',user_controller.jsonToExcelController);
 
+//for authenticate
 router.get(
   "/authenticate",
   passport.authenticate("jwt", { session: false }),
   user_controller.authenticate
 );
 
+//to request email verification
 router.get(
   "/request_email_verification_token",
   passport.authenticate("jwt", { session: false }),
   user_controller.request_email_verifcation_token
 );
 
+//to verify email
 router.get(
   "/verify_email/:otp",
   passport.authenticate("jwt", { session: false }),
@@ -55,19 +61,32 @@ router.get(
 
 //Password RESET
 router.post('/recover', [
-  // check('email').isEmail().withMessage('Enter a valid email address'),
 ], user_controller.recover);
 
+//to verify token
 router.get('/reset/:token', user_controller.reset);
 
-router.post('/reset/:token', [
-  // check('password').not().isEmpty().isLength({min: 6}).withMessage('Must be at least 6 chars long'),
-  // check('confirmPassword', 'Passwords do not match').custom((value, {req}) => (value === req.body.password)),
-], user_controller.resetPassword);
 
-//sociallogin
+//to reset password
+router.post('/reset/:token', user_controller.resetPassword);
+
+//sociallogin for facebook
 router.post('/socialLoginWithFacebook',user_controller.socialLoginWithFacebook);
-router.post('/socialLoginWithGoogle',user_controller.socialLoginWithGoogle)
+
+//social login for google
+router.post('/socialLoginWithGoogle',user_controller.socialLoginWithGoogle);
+
+//get all tags by user
+router.post('/getAllTags',passport.authenticate("jwt", { session: false })
+,tags_controller.getAllTags)
+
+//get all event categories for user
+router.post('/getAllCategories',  passport.authenticate("jwt", { session: false }),
+ event_category_controller.getAllCategories);
+
+
+
+
 
 
 

@@ -50,7 +50,7 @@ const user_schema = new Schema({
   is_premium:{type:Boolean,default:0},
   gender:{type:Number,},
   total_worth: { type: Number, default: 0 },
-  email: { type: String, required: true },
+  email: { type: String, required: true ,    unique: true  },
   password: { type: String,  },
   phone: { type: String,},
   credit: { type: String, default: 0 },
