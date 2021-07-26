@@ -149,7 +149,7 @@ exports.login = async (req, res) => {
     const password = req.body.password;
     // finding the user with email
     User.findOne({ email }).then((user) => {
-      // checking if user exist
+      // checking if user exist\
       if (!user) {
         // genrating error if user does no exist
         errors.email = "User not found";
