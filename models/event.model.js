@@ -50,6 +50,7 @@ const eventSchema = new Schema(
       type: String,
       required: true,
     },
+    status:{type: Boolean, default: falsex},
   },
   { timestamps: true }
 );

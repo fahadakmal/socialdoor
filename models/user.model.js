@@ -66,6 +66,7 @@ const user_schema = new Schema({
   language: {type: String, default: "english"},
   resetPasswordToken:{type : String,required:false},
   resetPasswordExpires:{ type: Date,required:false },
+  status:{typee:Boolean,default:true},
   otp: [otp_value_schema]
 },{timestamps: true});
 

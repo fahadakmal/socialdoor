@@ -8,6 +8,8 @@ const EventReview= new Schema(
   {
    comment:{type:String,},
    rating:{type:number,required:true},
+   status:{typee:Boolean,default:true}
+
   },{timestamps: true});
 
   module.exports = new mongoose.model("EventReview", EventReview);

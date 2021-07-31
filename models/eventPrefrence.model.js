@@ -6,7 +6,9 @@ const Prefrence = new Schema(
   {
    prefrenceKey:{type:String,required:true},
    PrefrenceValue:{type:String,required:true},
-   prefrenceImage:{type:String,}
+   prefrenceImage:{type:String,},
+   status:{typee:Boolean,default:true}
+
   },{timestamps: true});
 
   module.exports = new mongoose.model("Prefrence", Prefrence);

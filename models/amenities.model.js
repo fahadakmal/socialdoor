@@ -11,6 +11,7 @@ const amenitiesSchema=new Schema({
         contentType: String,
       },
       description: { type:String},
+      status:{type:Boolean,default:true}
 },{timestamps: true});
 
 module.exports=new mongoose.model('Amenity',amenitiesSchema);
