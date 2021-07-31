@@ -10,7 +10,7 @@ const address = new Schema({
     city: { type: String, required: true },
     postal_code: { type: String, required: true },
     coordinates: { type: String },
-  });
+  },{timestamps: true});
 
 
   module.exports=new mongoose.model('Address',address);

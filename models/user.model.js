@@ -47,7 +47,7 @@ const user_schema = new Schema({
   presentEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "eventSchema" }],
   favoriteEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "eventSchema" }],
   dob:{type:Date,},
-  is_premium:{type:Boolean,default:0},
+  is_premium:{type:Schema.Types.ObjectId,ref:'Feature'},
   gender:{type:Number,},
   total_worth: { type: Number, default: 0 },
   email: { type: String, required: true ,    unique: true  },
@@ -56,21 +56,18 @@ const user_schema = new Schema({
   credit: { type: String, default: 0 },
   wallet: { type: String, default: 0 },
   paymentDetails:{type:String},
-  followers:[{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
-  followeing:[{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
   favouriteCategories:[{type:mongoose.Schema.Types.ObjectId,ref:"categorySchema"}],
   comments:[{  type: Schema.Types.ObjectId,ref: 'Comment'}],
+  rating:{type:Number,required:true},
   is_verified: { type: Boolean, default: false },
   is_email_verified: { type: Boolean, default: false },
   is_phone_verified: { type: Boolean, default: false },
   is_active: { type: Boolean, default: true },
-  created_on: { type: Date, default: Date() },
-  updated_on: { type: Date, default: Date() },
   language: {type: String, default: "english"},
   resetPasswordToken:{type : String,required:false},
   resetPasswordExpires:{ type: Date,required:false },
   otp: [otp_value_schema]
-});
+},{timestamps: true});
 
 
 module.exports = new mongoose.model('User', user_schema);

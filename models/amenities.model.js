@@ -10,6 +10,7 @@ const amenitiesSchema=new Schema({
         data: Buffer,
         contentType: String,
       },
-});
+      description: { type:String},
+},{timestamps: true});
 
-module.exports=new mongoose.model('Amenities',amenitiesSchema);
+module.exports=new mongoose.model('Amenity',amenitiesSchema);

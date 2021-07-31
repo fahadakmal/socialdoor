@@ -52,6 +52,10 @@ router.post('reques')
 router.get('relatedEvents')
 
 
+module.exports = router;
+
+
+
 
 
 
