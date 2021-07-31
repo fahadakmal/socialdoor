@@ -7,7 +7,7 @@ const Rule = new Schema(
    title:{type:String,required:true},
    description:{type:String,required:true},
    ruleImage:{type:String,},
-   status:{typee:Boolean,default:true}
+   status:{type:Boolean,default:true}
 
   },{timestamps: true});
 

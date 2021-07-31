@@ -7,7 +7,7 @@ const Prefrence = new Schema(
    prefrenceKey:{type:String,required:true},
    PrefrenceValue:{type:String,required:true},
    prefrenceImage:{type:String,},
-   status:{typee:Boolean,default:true}
+   status:{type:Boolean,default:true}
 
   },{timestamps: true});
 

@@ -8,7 +8,7 @@ const EventReview= new Schema(
   {
    comment:{type:String,},
    rating:{type:number,required:true},
-   status:{typee:Boolean,default:true}
+   status:{type:Boolean,default:true}
 
   },{timestamps: true});
 

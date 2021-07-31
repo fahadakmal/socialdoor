@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {user_controller,tags_controller,event_category_controller} = require("../../controllers/user.router");
+const {user_controller,tags_controller,event_category_controller} = require("../../controllers/user.controller");
 const passport = require("passport");
 
 
@@ -81,8 +81,8 @@ router.post('/getAllTags',passport.authenticate("jwt", { session: false })
 ,tags_controller.getAllTags)
 
 //get all event categories for user
-router.post('/getAllCategories',  passport.authenticate("jwt", { session: false }),
- event_category_controller.getAllCategories);
+// router.post('/getAllCategories',  passport.authenticate("jwt", { session: false }),
+//  event_category_controller.getAllCategories);
 
 
 

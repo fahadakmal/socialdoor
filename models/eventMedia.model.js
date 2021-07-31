@@ -8,7 +8,7 @@ const EventMedia=new Schema({
         data: Buffer,
         contentType: String,
       },
-      status:{typee:Boolean,default:true}
+      status:{type:Boolean,default:true}
 },{timestamps: true});
 
 module.exports=new mongoose.model('EventMedia',EventMedia);

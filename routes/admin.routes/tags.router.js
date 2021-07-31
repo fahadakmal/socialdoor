@@ -1,29 +1,25 @@
 
 
 
+
 const router = require("express").Router();
-const {user_controller,tags_controller,event_category_controller} = require("../../controllers/user.router");
+const {admin_tags_controller,} = require("../../controllers/admin.controller");
 const passport = require("passport");
 
-
-
-
-
 //admin add tags in db for event like trending or others
-router.post('/addTag',  passport.authenticate("jwt", { session: false }),
-tags_controller.addTag);
+router.post('/addTag',admin_tags_controller.addTag);
 
 //admin delete tags for event from fb like trending
-router.post('/deleteTag',tags_controller.deleteTag);
+router.post('/deleteTag',admin_tags_controller.deleteTag);
 
 //admin update tags from db table like popolar
-router.post('/updateTag',tags_controller.updateTag);
+router.post('/updateTag',admin_tags_controller.updateTag);
 
 //admin get all tags from db  like popolar 
-router.post('getTags');
+router.post('/getAllTags',admin_tags_controller.getAllTags)
 
 //admin activate or deactivate tags
-router.post('activateOrDeactivateTags');
+// router.post('activateOrDeactivateTags');
 
 module.exports = router;
 
