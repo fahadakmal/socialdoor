@@ -1,15 +1,28 @@
-//admin add event category n catefory table
-router.post('addCategory');
 
-//admin update event category in table
-router.post('updateCategory');
+
+
+
+
+const router = require("express").Router();
+const {admin_category_controller} = require("../../controllers/admin.controller");
+const passport = require("passport");
+
+//admin add event category n catefory table
+router.post('/addCategory',admin_amenities_controller.addCategory);
 
 //admin delete event category
-router.post('deleteCategory')
+router.post('/deleteCategory',admin_amenities_controller.deleteCategory);
+
+//admin update event category in table
+router.post('/updateCategory',admin_amenities_controller.updateCategory);
 
 //admin get all categories from evetn categories table
-router.post('getCategory');
-
-
+router.post('/getCategories',admin_amenities_controller.getAllCategories)
+  
 //admin activate or deactive category
-router.post('activateOrDeactivateCategory');
+
+router.post('/updateCategoryStatus',admin_amenities_controller.updateCategoryStatus)
+
+module.exports = router;
+
+

@@ -3,18 +3,22 @@ const { json } = require("body-parser");
 
 
 //to get all tags
-exports.getAllTags = async(req, res) => {
+exports.getAllPrefrences = (req, res) => {
   const Tag = req.models.tag_model;
   try {
-    let tagsList=await Tag.find().sort({'updatedAt': "desc"});
-    res.status(200).json(tagsList);
+    Tag.find().then((data) => {
+      let tagsList = data.map((tag) => {
+        return { tag_name: tag.tag_name, _id: tag._id };
+      });
+      res.status(200).json(tagsList);
+    });
   } catch (error) {
     res.status(500).json("Un Known Error Occured" + error);
   }
 };
 
 //to add tag
-exports.addTag = (req, res) => {
+exports.addPrefrence = (req, res) => {
   const Tag = req.models.tag_model;
   const tag_name = req.body.tag_name;
   try {
@@ -42,7 +46,7 @@ exports.addTag = (req, res) => {
 };
 
 //to delete tag
-exports.deleteTag = async (req, res) =>  {
+exports.deletePrefrence = async (req, res) =>  {
   const id = req.body._id;
   const tagName = req.body.tag_name;
   const TagModel = req.models.tag_model;
@@ -60,7 +64,7 @@ exports.deleteTag = async (req, res) =>  {
 };
 
 //to update tag
-exports.updateTag = (req, res) => {
+exports.updatePrefrence = (req, res) => {
   const _id = req.body._id;
   const tagName = req.body.tag_name;
   const updatedTagName = req.body.updatedTagName;
@@ -81,7 +85,7 @@ exports.updateTag = (req, res) => {
 };
 
 //to update status
-exports.updateTagStatus = (req, res) => {
+exports.updatePrefrenceStatus = (req, res) => {
   const _id = req.body._id;
   const TagModel = req.models.tag_model;
   const tagStatus =req.body.status

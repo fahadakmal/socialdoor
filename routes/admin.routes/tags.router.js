@@ -19,7 +19,8 @@ router.post('/updateTag',admin_tags_controller.updateTag);
 router.post('/getAllTags',admin_tags_controller.getAllTags)
 
 //admin activate or deactivate tags
-// router.post('activateOrDeactivateTags');
+router.post('/updateTagStatus',admin_tags_controller.updateTagStatus);
+
 
 module.exports = router;
 
