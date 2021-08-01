@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const RefralCode = new Schema(
   {
-      event:{type:Scheme.Types.ObjectId,ref:'EventModel'},
+      event:{type:Schema.Types.ObjectId,ref:'EventModel'},
       user:{type:Schema.Types.ObjectId,ref:'User'},
       refralCode:{type:String,required:true},
       refralLimit:{type:Number,default:5}

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const Payment = new Schema(
   {
-      user:{type:Scheme.Types.ObjectId,ref:'User'},
+      user:{type:Schema.Types.ObjectId,ref:'User'},
       host:{type:Schema.Types.ObjectId,ref:'User'},
       type:{type:Number,},
       amount:{type:Number,},

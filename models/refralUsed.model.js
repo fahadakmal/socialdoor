@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 const RefralUsed = new Schema(
   {
-      event:{type:Scheme.Types.ObjectId,ref:'EventModel'},
+      event:{type:Schema.Types.ObjectId,ref:'EventModel'},
       refralOwner:{type:Schema.Types.ObjectId,ref:'User'},
       refralUsers:[{type:Schema.Types.ObjectId,ref:'User'}],
       refralCode:{type:String,required:true},

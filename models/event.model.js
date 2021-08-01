@@ -14,7 +14,7 @@ const eventSchema = new Schema(
     startTime: { type: Date,},
     endTime: { type: Date,},
     eventPhone: { type: Number, required: true },
-    eventEmailAddress: { type: email, required: true },
+    eventEmailAddress: { type: String, required: true },
     host: { type: Schema.Types.ObjectId, ref: "User" },
     volume: { type: Number, default: 0 },
     eventRequests: [{ type: Schema.Types.ObjectId, ref: "EventRequest" }],
@@ -50,7 +50,7 @@ const eventSchema = new Schema(
       type: String,
       required: true,
     },
-    status:{type: Boolean, default: falsex},
+    status:{type: Boolean, default: false},
   },
   { timestamps: true }
 );

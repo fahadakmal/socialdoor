@@ -9,4 +9,4 @@ const EventCreationCharges = new Schema(
    eventCreationCharges:{type:Number,required:true},
   },{timestamps: true});
 
-  module.exports = new mongoose.model("EventPaymentDetail", EventPaymentDetail);
+  module.exports = new mongoose.model("EventCreationCharges", EventCreationCharges);

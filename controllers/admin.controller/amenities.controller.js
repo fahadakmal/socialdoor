@@ -19,6 +19,8 @@ exports.getAllAmenities = (req, res) => {
 
 //to add tag
 exports.addAminity = (req, res) => {
+  const config = req.config;
+  const path =FILE_UPLOAD_LINK;
   const Tag = req.models.tag_model;
   const tag_name = req.body.tag_name;
   try {

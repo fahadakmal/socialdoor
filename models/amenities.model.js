@@ -7,8 +7,7 @@ const amenitiesSchema=new Schema({
         required:true,
     },
     icon: {
-        data: Buffer,
-        contentType: String,
+        type: String,
       },
       description: { type:String},
       status:{type:Boolean,default:true}

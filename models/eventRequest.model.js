@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const EventRequest = new Schema(
   {
-      event:{type:Scheme.Types.ObjectId,ref:'EventModel'},
+      event:{type:Schema.Types.ObjectId,ref:'EventModel'},
       host:{type:Schema.Types.ObjectId,ref:'User'},
       user:{type:Schema.Types.ObjectId,ref:'User'},
       payment:{type:Schema.Types.ObjectId,ref:'Payment'},

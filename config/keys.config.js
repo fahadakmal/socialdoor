@@ -1,7 +1,7 @@
 const fs = require("fs");
 module.exports = {
   PORT: process.env.PORT || 5000,
-
+  FILE_UPLOAD_LINK:"socialdoor.lovestoblog.com" || "",
   DB: {
     DB1: {
       username: process.env.DB_USER || "",

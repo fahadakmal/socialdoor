@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const EventStory = new Schema(
   {
    storymedia:{type:String,required:true},
-   event:{type:Scheme.Types.ObjectId,ref:'EventModel'},
+   event:{type:Schema.Types.ObjectId,ref:'EventModel'},
    user:{type:Schema.Types.ObjectId,ref:'User'},
    status:{type:Boolean,default:true},
 
