@@ -1,7 +1,10 @@
 const router = require("express").Router();
-const passport = require("passport");
+const {user_event_controller} = require("../../controllers/user.controller");
 
 
+
+//below ropute is used to create route,
+router.get('/eventCreationForm',user_event_controller.getEventCreation);
 
 //mobileUser will host an event by using this route
 router.get('/addEvent');
