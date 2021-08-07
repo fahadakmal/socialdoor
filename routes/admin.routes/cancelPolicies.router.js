@@ -22,7 +22,7 @@ router.post('/getCancelationPolicies',admin_cancelPolicy_controller.getAllcancel
   
 //admin activate or deactivate a policy
 
-router.post('/activateOrDeactivatePolicy',admin_cancelPolicy_controller.updateCancelPolicyStatus)
+router.post('/updatePolicyStatus',admin_cancelPolicy_controller.updateCancelPolicyStatus)
 
 module.exports = router;
 

@@ -8,6 +8,7 @@ const amenitiesSchema=new Schema({
     },
     icon: {
         type: String,
+        default:null,
       },
       description: { type:String},
       status:{type:Boolean,default:true}

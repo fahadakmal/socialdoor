@@ -1,106 +1,114 @@
 const { json } = require("body-parser");
 
-
-
-//to get all tags
-exports.getAllCategories = (req, res) => {
-  const Tag = req.models.tag_model;
+//to get all tagsA
+exports.getAllCategories = async (req, res) => {
+  const EventCategory = req.models.event_category_model;
   try {
-    Tag.find().then((data) => {
-      let tagsList = data.map((tag) => {
-        return { tag_name: tag.tag_name, _id: tag._id };
-      });
-      res.status(200).json(tagsList);
-    });
+    let categoryList = await EventCategory.find()
+      .sort({ updatedAt: "desc" });
+    res
+      .status(200)
+      .json({ status: true, message: "All List Fetched", categoryList });
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
 
 //to add tag
-exports.addCategory = (req, res) => {
-  const Tag = req.models.tag_model;
-  const tag_name = req.body.tag_name;
+exports.addCategory = async (req, res) => {
+  const EventCategory = req.models.event_category_model;
   try {
-    Tag.findOne({ tag_name })
-      .then((tag) => {
-        if (tag) {
-          return res.json({ success: false, message: "Tag already exist" });
-        }
-        const newTag = new Tag({ tag_name: tag_name });
-        newTag
-          .save()
-          .then((tag) => {
-            res.json({ success: true, tag: tag });
-          })
-          .catch((err) => {
-            res.json({ success: false, err });
-          });
-      })
-      .catch((err) => {
-        res.json({ success: false, err: err });
-      });
+      const newCategory = new EventCategory(req.body);
+      await newCategory.save();
+      res
+        .status(201)
+        .json({
+          success: true,
+          message: "Category addedd successfully",
+          newCategory: newCategory,
+        });
+
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
 //to delete tag
-exports.deleteCategory = async (req, res) =>  {
+exports.deleteCategory = async (req, res) => {
   const id = req.body._id;
-  const tagName = req.body.tag_name;
-  const TagModel = req.models.tag_model;
+  const EventCategory = req.models.event_category_model;
   try {
-     const tag= await TagModel.findByIdAndDelete(id)
-     if (!tag) {
-       res.status(404).send("No item found");
-     }else{
-      res.json({ success: true, message: tagName + " deleted successfully" });
-
-     }
+    const category = await EventCategory.findByIdAndDelete(id);
+    if (!category) {
+      res.status(404).send({ status: false, message: "No Category found" });
+    } else {
+      res.json({
+        success: true,
+        message: req.body.category_name + " deleted successfully",
+      });
+    }
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
 
 //to update tag
-exports.updateCategory = (req, res) => {
-  const _id = req.body._id;
-  const tagName = req.body.tag_name;
-  const updatedTagName = req.body.updatedTagName;
-  const TagModel = req.models.tag_model;
+exports.updateCategory = async (req, res) => {
+  const _id=req.body._id;
+  const parentId = req.body.parentId;
+  const category_name=req.body.category_name;
+  const EventCategory = req.models.event_category_model;
 
   try {
-    TagModel.findByIdAndUpdate({_id}, { tag_name: updatedTagName })
-      .then((data) => {
-        console.log(data);
-        res.json({ success: true, message: tagName + " updated successfully" });
-      })
-      .catch((err) => {
-        res.status(500).json("Un Known Error Occured" + err);
-      });
+    const category = await EventCategory.findByIdAndUpdate(
+      { _id },
+      {parentId,category_name},
+      { new: true }
+    );
+    if (!category) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Category not found" });
+    }
+    res.json({ success: true, message: "Successfully updated", category });
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
 
 //to update status
-exports.updateCategoryStatus = (req, res) => {
+exports.updateCategoryStatus = async (req, res) => {
   const _id = req.body._id;
-  const TagModel = req.models.tag_model;
-  const tagStatus =req.body.status
+  const EventCategory = req.models.event_category_model;
+  const categoryStatus = req.body.status;
 
   try {
-    TagModel.findByIdAndUpdate({_id}, { status: tagStatus })
-      .then((data) => {
-        console.log(data);
-        res.json({ success: true, message: tagName + " updated successfully" });
-      })
-      .catch((err) => {
-        res.status(500).json("Un Known Error Occured" + err);
+    const category = await EventCategory.findByIdAndUpdate(
+      { _id },
+      { status: categoryStatus },
+      { new: true }
+    );
+    if (!category) {
+      return res
+        .status(404)
+        .json({ status: false, message: "category not found" });
+    }
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: req.body.title + " updated successfully",
+        category,
       });
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
-
