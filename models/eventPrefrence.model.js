@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const Prefrence = new Schema(
   {
    prefrenceKey:{type:String,required:true},
-   PrefrenceValue:{type:String,required:true},
+   prefrenceValue:{type:String,required:true},
    prefrenceImage:{type:String,},
    status:{type:Boolean,default:true}
 

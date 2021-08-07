@@ -87,15 +87,15 @@ exports.updateEventCreation = async (req, res) => {
 exports.updateCreationStatus = async (req, res) => {
   const _id = req.body._id;
   const EventCareation = req.models.eventCreationModel;
-  const categoryStatus = req.body.status;
+  const eventCreationStatus = req.body.status;
 
   try {
-    const category = await EventCareation.findByIdAndUpdate(
+    const eventCreation = await EventCareation.findByIdAndUpdate(
       { _id },
-      { status: categoryStatus },
+      { status: eventCreationStatus },
       { new: true }
     );
-    if (!category) {
+    if (!eventCreation) {
       return res
         .status(404)
         .json({ status: false, message: "category not found" });
@@ -105,7 +105,7 @@ exports.updateCreationStatus = async (req, res) => {
       .json({
         success: true,
         message: req.body.eventCreationEntity + " updated successfully",
-        category,
+        eventCreation,
       });
   } catch (error) {
     res

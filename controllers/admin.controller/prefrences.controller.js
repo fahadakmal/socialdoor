@@ -1,106 +1,115 @@
 const { json } = require("body-parser");
 
-
-
-//to get all tags
-exports.getAllPrefrences = (req, res) => {
-  const Tag = req.models.tag_model;
+//to get all tagsA
+exports.getAllPrefrences = async (req, res) => {
+  const EventPrefrence = req.models.eventPrefrenceModel;
   try {
-    Tag.find().then((data) => {
-      let tagsList = data.map((tag) => {
-        return { tag_name: tag.tag_name, _id: tag._id };
-      });
-      res.status(200).json(tagsList);
-    });
+    let eventPrefrencesList = await EventPrefrence.find()
+      .sort({ updatedAt: "desc" });
+    res
+      .status(200)
+      .json({ status: true, message: "All List Fetched", eventPrefrencesList });
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
 
 //to add tag
-exports.addPrefrence = (req, res) => {
-  const Tag = req.models.tag_model;
-  const tag_name = req.body.tag_name;
+exports.addPrefrence = async (req, res) => {
+  const EventPrefrence = req.models.eventPrefrenceModel;
   try {
-    Tag.findOne({ tag_name })
-      .then((tag) => {
-        if (tag) {
-          return res.json({ success: false, message: "Tag already exist" });
-        }
-        const newTag = new Tag({ tag_name: tag_name });
-        newTag
-          .save()
-          .then((tag) => {
-            res.json({ success: true, tag: tag });
-          })
-          .catch((err) => {
-            res.json({ success: false, err });
-          });
-      })
-      .catch((err) => {
-        res.json({ success: false, err: err });
-      });
+      const eventPrefrence = new EventPrefrence(req.body);
+      await eventPrefrence.save();
+      res
+        .status(201)
+        .json({
+          success: true,
+          message: "Prefrence addedd successfully",
+          eventPrefrence: eventPrefrence,
+        });
+
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
 //to delete tag
-exports.deletePrefrence = async (req, res) =>  {
+exports.deletePrefrence = async (req, res) => {
   const id = req.body._id;
-  const tagName = req.body.tag_name;
-  const TagModel = req.models.tag_model;
+  const EventPrefrence = req.models.eventPrefrenceModel;
   try {
-     const tag= await TagModel.findByIdAndDelete(id)
-     if (!tag) {
-       res.status(404).send("No item found");
-     }else{
-      res.json({ success: true, message: tagName + " deleted successfully" });
-
-     }
+    const eventPrefrence = await EventPrefrence.findByIdAndDelete(id);
+    if (!eventPrefrence) {
+      res.status(404).send({ status: false, message: "No Event Prefrence found" });
+    } else {
+      res.json({
+        status: true,
+        message: req.body.prefrenceKey + " deleted successfully",
+      });
+    }
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
 
 //to update tag
-exports.updatePrefrence = (req, res) => {
-  const _id = req.body._id;
-  const tagName = req.body.tag_name;
-  const updatedTagName = req.body.updatedTagName;
-  const TagModel = req.models.tag_model;
+exports.updatePrefrence = async (req, res) => {
+  const _id=req.body._id;
+  const prefrenceKey = req.body.prefrenceKey;
+  const prefrenceValue=req.body.prefrenceValue;
+  const prefrenceImage=req.body.prefrenceImage;
+  const EventPrefrence = req.models.eventPrefrenceModel;
 
   try {
-    TagModel.findByIdAndUpdate({_id}, { tag_name: updatedTagName })
-      .then((data) => {
-        console.log(data);
-        res.json({ success: true, message: tagName + " updated successfully" });
-      })
-      .catch((err) => {
-        res.status(500).json("Un Known Error Occured" + err);
-      });
+    const eventPrefrence = await EventPrefrence.findByIdAndUpdate(
+      { _id },
+      {prefrenceKey,prefrenceValue,prefrenceImage},
+      { new: true }
+    );
+    if (!eventPrefrence) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Event Prefrence not found" });
+    }
+    res.json({ success: true, message: "Successfully updated", eventPrefrence });
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
 
 //to update status
-exports.updatePrefrenceStatus = (req, res) => {
+exports.updatePrefrenceStatus = async (req, res) => {
   const _id = req.body._id;
-  const TagModel = req.models.tag_model;
-  const tagStatus =req.body.status
+  const EventPrefrence = req.models.eventPrefrenceModel;
+  const eventPrefrenceStatus = req.body.status;
 
   try {
-    TagModel.findByIdAndUpdate({_id}, { status: tagStatus })
-      .then((data) => {
-        console.log(data);
-        res.json({ success: true, message: tagName + " updated successfully" });
-      })
-      .catch((err) => {
-        res.status(500).json("Un Known Error Occured" + err);
+    const eventPrefrence = await EventPrefrence.findByIdAndUpdate(
+      { _id },
+      { status: eventPrefrenceStatus },
+      { new: true }
+    );
+    if (!eventPrefrence) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Prefrence not found" });
+    }
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: req.body.prefrenceKey + " updated successfully",
+        eventPrefrence,
       });
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
-

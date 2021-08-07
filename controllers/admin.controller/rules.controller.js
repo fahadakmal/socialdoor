@@ -1,106 +1,114 @@
 const { json } = require("body-parser");
 
-
-
-//to get all tags
-exports.getAllRules = (req, res) => {
-  const Tag = req.models.tag_model;
+//to get all tagsA
+exports.getAllRules = async (req, res) => {
+  const EventRule = req.models.eventRuleModel;
   try {
-    Tag.find().then((data) => {
-      let tagsList = data.map((tag) => {
-        return { tag_name: tag.tag_name, _id: tag._id };
-      });
-      res.status(200).json(tagsList);
-    });
+    let rulesList = await EventRule.find()
+      .sort({ updatedAt: "desc" });
+    res
+      .status(200)
+      .json({ status: true, message: "All List Fetched", rulesList });
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
 
 //to add tag
-exports.addRule = (req, res) => {
-  const Tag = req.models.tag_model;
-  const tag_name = req.body.tag_name;
+exports.addRule = async (req, res) => {
+  const EventRule = req.models.eventRuleModel;
   try {
-    Tag.findOne({ tag_name })
-      .then((tag) => {
-        if (tag) {
-          return res.json({ success: false, message: "Tag already exist" });
-        }
-        const newTag = new Tag({ tag_name: tag_name });
-        newTag
-          .save()
-          .then((tag) => {
-            res.json({ success: true, tag: tag });
-          })
-          .catch((err) => {
-            res.json({ success: false, err });
-          });
-      })
-      .catch((err) => {
-        res.json({ success: false, err: err });
-      });
+      const newRule = new EventRule(req.body);
+      await newRule.save();
+      res
+        .status(201)
+        .json({
+          success: true,
+          message: "Rule addedd successfully",
+          newRule: newRule,
+        });
+
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
 //to delete tag
-exports.deleteRule = async (req, res) =>  {
+exports.deleteRule = async (req, res) => {
   const id = req.body._id;
-  const tagName = req.body.tag_name;
-  const TagModel = req.models.tag_model;
+  const EventRule = req.models.eventRuleModel;
   try {
-     const tag= await TagModel.findByIdAndDelete(id)
-     if (!tag) {
-       res.status(404).send("No item found");
-     }else{
-      res.json({ success: true, message: tagName + " deleted successfully" });
-
-     }
+    const eventRule = await EventRule.findByIdAndDelete(id);
+    if (!eventRule) {
+      res.status(404).send({ status: false, message: "No Rule found" });
+    } else {
+      res.json({
+        success: true,
+        message: req.body.title + " deleted successfully",
+      });
+    }
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
 
 //to update tag
-exports.updateRule = (req, res) => {
-  const _id = req.body._id;
-  const tagName = req.body.tag_name;
-  const updatedTagName = req.body.updatedTagName;
-  const TagModel = req.models.tag_model;
+exports.updateRule = async (req, res) => {
+  const _id=req.body._id;
+  const title = req.body.title;
+  const description=req.body.description;
+  const EventRule = req.models.eventRuleModel;
 
   try {
-    TagModel.findByIdAndUpdate({_id}, { tag_name: updatedTagName })
-      .then((data) => {
-        console.log(data);
-        res.json({ success: true, message: tagName + " updated successfully" });
-      })
-      .catch((err) => {
-        res.status(500).json("Un Known Error Occured" + err);
-      });
+    const eventRule = await EventRule.findByIdAndUpdate(
+      { _id },
+      {title,description},
+      { new: true }
+    );
+    if (!eventRule) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Rule not found" });
+    }
+    res.json({ success: true, message: "Successfully updated", eventRule });
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
 
 //to update status
-exports.updateRuleStatus = (req, res) => {
+exports.updateRuleStatus = async (req, res) => {
   const _id = req.body._id;
-  const TagModel = req.models.tag_model;
-  const tagStatus =req.body.status
+  const EventRule = req.models.eventRuleModel;
+  const ruleStatus = req.body.status;
 
   try {
-    TagModel.findByIdAndUpdate({_id}, { status: tagStatus })
-      .then((data) => {
-        console.log(data);
-        res.json({ success: true, message: tagName + " updated successfully" });
-      })
-      .catch((err) => {
-        res.status(500).json("Un Known Error Occured" + err);
+    const eventRule = await EventRule.findByIdAndUpdate(
+      { _id },
+      { status: ruleStatus },
+      { new: true }
+    );
+    if (!eventRule) {
+      return res
+        .status(404)
+        .json({ status: false, message: "category not found" });
+    }
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: req.body.title + " updated successfully",
+        eventRule,
       });
   } catch (error) {
-    res.status(500).json("Un Known Error Occured" + error);
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
   }
 };
-
