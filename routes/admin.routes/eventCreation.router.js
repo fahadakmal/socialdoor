@@ -20,6 +20,8 @@ router.post('/updateEventCreation',admin_eventCreation_controller.updateEventCre
 router.post('/getEventCreation',admin_eventCreation_controller.getAllEventCreation)
   
 
+router.post('/updateCreationStatus',admin_eventCreation_controller.updateCreationStatus)
+
 
 module.exports = router;
 
