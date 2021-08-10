@@ -1,8 +1,6 @@
 const router = require("express").Router();
 const {user_event_controller} = require("../../controllers/user.controller");
-var multer  = require('multer')
 const {uploadFunc}=require('../../helper/imageS3.helper');
-  const fs=require('fs');
 
 
 
@@ -10,8 +8,7 @@ const {uploadFunc}=require('../../helper/imageS3.helper');
 router.post('/eventCreationForm',user_event_controller.getEventCreation);
 
 //mobileUser will host an event by using this route
-var cpUpload = uploadFunc.fields([{ name: 'thumbnail', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
-router.post('/addEvent', cpUpload,user_event_controller.addEvent);
+router.post('/addEvent',[uploadFunc],user_event_controller.addEvent);
 
 
 

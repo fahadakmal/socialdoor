@@ -3,6 +3,7 @@ const S3=require('aws-sdk/clients/s3');
 const fs=require('fs');
 var multer = require('multer')
 var multerS3 = require('multer-s3')
+const path=require('path');
 const config=require('../config/keys.config');
 const bucketName=config.AWS.AWS_BUCKET_NAME
 const region=config.AWS.AWS_BUCKET_REGION
@@ -48,18 +49,46 @@ function getFileStream(fileKey)
 }
 exports.getFileStream=getFileStream;
 
-const uploadFunc = multer({
+
+const fileFilter = (req, file, cb) => {
+    console.log('file.mimetype is ', file.mimetype);
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'video/mp4' || file.mimetype === 'video/avi' || file.mimetype === 'video/mov' || file.mimetype === 'video/quicktime') {
+      cb(null, true);
+    } else {
+        cb({status:false, message:'Only Images or Videos'});
+    }
+  }
+   
+
+  //below strategy is used to upload to s3
+const uploadStrategy = multer({
   storage: multerS3({
     s3: s3,
     bucket: bucketName,
     metadata: function (req, file, cb) {
         cb(null, {fieldName: file.fieldname});
       },
-      key: function (req, file, cb) {
-        cb(null, Date.now().toString())
-      }
-  })
+  }),
+  limits: { fileSize: 1000000 },
+  fileFilter:fileFilter,
 })
 
-exports.uploadFunc=uploadFunc;
+
+const uploadEventImages=(req,res)=>
+{
+    var cpUpload = uploadStrategy.fields([{ name: 'thumbnail', maxCount: 1, }, { name: 'gallery', maxCount: 8 }])
+
+    cpUpload(req, res, function (err) {
+        console.log('i am in');
+        if (err instanceof multer.MulterError) {
+          res.json({status:false,message:err.message})
+        } else if (err) {
+            res.json({status:false,message:err})
+        }
+    
+        // Everything went fine.
+      })
+}
+
+exports.uploadFunc=uploadEventImages;
 
