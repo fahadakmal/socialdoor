@@ -25,7 +25,7 @@ exports.addCategory = async (req, res) => {
       res
         .status(201)
         .json({
-          success: true,
+          status: true,
           message: "Category addedd successfully",
           newCategory: newCategory,
         });

@@ -25,7 +25,7 @@ exports.addPrefrence = async (req, res) => {
       res
         .status(201)
         .json({
-          success: true,
+          status: true,
           message: "Prefrence addedd successfully",
           eventPrefrence: eventPrefrence,
         });

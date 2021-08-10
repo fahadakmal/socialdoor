@@ -42,3 +42,16 @@ exports.getEventCreation = async (req, res) => {
         .json({ status: false,  message: error.message });
     }
   };
+
+
+  exports.addEvent=(req,res)=>{
+    var path = require('path');
+    const file=req.files.thumbnail[0];
+   
+  //   fs.unlink(`../../${file.path}`,function (err) {
+  //     if (err) throw err;
+  //     // if no error, file has been deleted successfully
+  //     console.log('File deleted!');
+  // })
+  }
+

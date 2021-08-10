@@ -1,13 +1,18 @@
 const router = require("express").Router();
 const {user_event_controller} = require("../../controllers/user.controller");
+var multer  = require('multer')
+const {uploadFunc}=require('../../helper/imageS3.helper');
+  const fs=require('fs');
 
 
 
 //below ropute is used to create route,
-router.get('/eventCreationForm',user_event_controller.getEventCreation);
+router.post('/eventCreationForm',user_event_controller.getEventCreation);
 
 //mobileUser will host an event by using this route
-router.get('/addEvent');
+var cpUpload = uploadFunc.fields([{ name: 'thumbnail', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
+router.post('/addEvent', cpUpload,user_event_controller.addEvent);
+
 
 
 //mobileUser will get all events for all particular area nad category and price range and also for particular date

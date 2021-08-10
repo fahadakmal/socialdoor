@@ -9,18 +9,6 @@ const passport = require('passport');
 var fs = require('fs'); 
 var path = require('path'); 
 const app = express();
-var multer = require('multer'); 
-  
-var storage = multer.diskStorage({ 
-    destination: (req, file, cb) => { 
-        cb(null, 'uploads') 
-    }, 
-    filename: (req, file, cb) => { 
-        cb(null, file.fieldname + '-' + Date.now()) 
-    } 
-}); 
-  
-var upload = multer({ storage: storage }); 
 
 app.use(bodyParser.urlencoded({ extended: false })) 
 app.use(bodyParser.json()) 

@@ -25,7 +25,7 @@ exports.addRule = async (req, res) => {
       res
         .status(201)
         .json({
-          success: true,
+          status: true,
           message: "Rule addedd successfully",
           newRule: newRule,
         });

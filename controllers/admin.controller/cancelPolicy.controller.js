@@ -31,7 +31,7 @@ exports.addCancelPolicy = async(req, res) => {
      }else{
         const newPolicy = new CancellationPolicy({ title: title,description:description,value:value });
         await newPolicy.save();
-        res.status(201).json({ success: true,message: "Cancellation Policy addedd successfully", newPolicy: newPolicy });
+        res.status(201).json({ status: true,message: "Cancellation Policy addedd successfully", newPolicy: newPolicy });
 
      }
     

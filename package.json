@@ -20,6 +20,7 @@
   "homepage": "https://github.com/fahadakmal/socialdoor#readme",
   "dependencies": {
     "@sendgrid/mail": "^7.4.0",
+    "aws-sdk": "^2.964.0",
     "bcrypt": "^5.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
@@ -30,6 +31,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.14",
     "multer": "^1.4.2",
+    "multer-s3": "^2.9.0",
     "nodemailer": "^6.4.16",
     "nodemon": "^2.0.7",
     "passport": "^0.4.1",

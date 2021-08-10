@@ -20,8 +20,11 @@ const RefralUsed=require('../models/refralUsed.model');
 const Tag=require("../models/tags.model");
 const USER = require("../models/user.model");
 
+ 
+
 // const ADMIN = require("../models/admin.model");
 const config = require("./../config/keys.config");
+
 module.exports = (req, res, next) => {
   const models = {
     user_model: USER,
@@ -51,5 +54,6 @@ module.exports = (req, res, next) => {
   
   req["models"] = models;
   req["config"] = config;
+
   next();
 };

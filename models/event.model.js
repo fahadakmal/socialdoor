@@ -31,6 +31,7 @@ const eventSchema = new Schema(
     finalisedMembers: [{ type: Schema.Types.ObjectId, ref: "User" }], 
     eventWallet: { type: Schema.Types.ObjectId, ref: "EventWallet" },
     eventCharges: {type:Number,required:true },
+    paypalToken: {type:String,required:true },
     venue: { type: Schema.Types.ObjectId, ref: "Address" },
     eventStatus: { type: Boolean, default: false },
     eventStories: [{ type: Schema.Types.ObjectId, ref: "EventStory" }],
@@ -42,7 +43,7 @@ const eventSchema = new Schema(
     },
     eventThumbNail: { type: String, required: true },
     eventGallery: [{ type: Schema.Types.ObjectId, ref: "EventMedia" }],
-    desc: {
+    description: {
       type: String,
       required: true,
     },

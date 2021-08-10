@@ -25,7 +25,7 @@ exports.addEventCreation = async (req, res) => {
       res
         .status(201)
         .json({
-          success: true,
+          status: true,
           message: "EventCareation addedd successfully",
           newCategory: newEventCreation,
         });
