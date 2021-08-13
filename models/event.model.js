@@ -2,6 +2,16 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+const address = new Schema({
+  type: { type: String, required: true },
+  home: { type: String, required: true },
+  street: { type: String, required: true },
+  floor: { type: String },
+  city: { type: String, required: true },
+  postal_code: { type: String, required: true },
+  coordinates: { type: String },
+});
+
 const eventSchema = new Schema(
   {
     title: {
@@ -32,7 +42,7 @@ const eventSchema = new Schema(
     eventWallet: { type: Schema.Types.ObjectId, ref: "EventWallet" },
     eventCharges: {type:Number,required:true },
     paypalToken: {type:String,required:true },
-    venue: { type: Schema.Types.ObjectId, ref: "Address" },
+    venue: [address],
     eventStatus: { type: Boolean, default: false },
     eventStories: [{ type: Schema.Types.ObjectId, ref: "EventStory" }],
     featured: { type: Schema.Types.ObjectId, ref: "Feature" },
@@ -49,8 +59,7 @@ const eventSchema = new Schema(
     },
     duration: {
       type: String,
-      required: true,
-    },
+default:null    },
     status:{type: Boolean, default: false},
   },
   { timestamps: true }
