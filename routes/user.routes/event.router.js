@@ -2,9 +2,11 @@ const router = require("express").Router();
 const multer = require("multer");
 const { user_event_controller } = require("../../controllers/user.controller");
 const { uploadStrategy } = require("../../helper/imageS3.helper");
+const passport = require("passport");
+
 
 //below ropute is used to create route,
-router.post("/eventCreationForm", user_event_controller.getEventCreation);
+router.post("/eventCreationForm",passport.authenticate("jwt", { session: false }), user_event_controller.getEventCreation);
 
 //mobileUser will host an event by using this route
 var cpUpload = uploadStrategy.fields([
@@ -15,6 +17,7 @@ var cpUpload = uploadStrategy.fields([
 router.post(
   "/addEvent",
   [
+    passport.authenticate("jwt", { session: false }),
     function (req, res,next) {
         cpUpload(req, res, function (err) {
             if (err instanceof multer.MulterError) {
