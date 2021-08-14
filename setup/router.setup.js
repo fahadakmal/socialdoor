@@ -13,5 +13,10 @@ module.exports = (app) => {
       const readStream=getFileStream(imageKey);
       readStream.pipe(res);
     });
+    app.get("/", (req, res) =>
+    res
+      .status(200)
+      .sendFile(path.resolve(__dirname, "./../templates/index.html"))
+  );
 
 };
