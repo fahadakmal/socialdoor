@@ -25,8 +25,6 @@ router.post(
               } else if (err) {
                 return  res.json({ status: false, message: err });
               }
-      
-          // Everything went fine 
           next();
         })
     }
@@ -36,7 +34,7 @@ router.post(
 );
 
 //mobileUser will get all events for all particular area nad category and price range and also for particular date
-router.get("/getEvents");
+router.post("/getEvents",user_event_controller.getAllEvents);
 
 //mobileUser rememberes
 router.post("/updateEvents");

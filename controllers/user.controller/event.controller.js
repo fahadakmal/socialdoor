@@ -79,3 +79,27 @@ exports.addEvent = async (req, res) => {
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
+
+
+exports.getAllEvents=async (req,res,) =>{
+  const {getFileStream}=require('../../helper/imageS3.helper')
+
+  console.log(req.body);
+  const reqBody=req.body;
+  const cityName=reqBody.cityName;
+  const Event = req.models.eventModel;
+  try {
+    let eventsList = await Event.find({"venue.city":cityName,hostedDate:{$gte:Date.now()}})
+      .sort({ updatedAt: "desc" });
+    res
+      .status(200)
+      .json({ status: true, message: "All List Fetched", eventsList });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ status: false,  message: error.message });
+  }
+     
+
+}
