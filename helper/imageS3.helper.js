@@ -70,3 +70,22 @@ exports.uploadStrategy = multer({
   limits: { fileSize: 1000000 },
   fileFilter: fileFilter,
 });
+
+exports.deleteMedia = async (mediaKey,callBackFunc) => {
+  let deleteParams = { Bucket: bucketName, Key: mediaKey };
+  let data = {};
+  await s3.deleteObject(deleteParams, function (err, data) {
+    console.log(err,'err');
+    console.log(data,'data');
+    if (err) {
+      console.log(err, err.stack);
+      data = { status: false, message: err };
+    }
+    // an error occurred
+    else {
+      data = { status: true, message: 'Successfulyy deleted'};
+    }
+    callBackFunc(data);
+
+  });
+};

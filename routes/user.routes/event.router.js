@@ -4,9 +4,12 @@ const { user_event_controller } = require("../../controllers/user.controller");
 const { uploadStrategy } = require("../../helper/imageS3.helper");
 const passport = require("passport");
 
-
 //below ropute is used to create route,
-router.post("/eventCreationForm",passport.authenticate("jwt", { session: false }), user_event_controller.getEventCreation);
+router.post(
+  "/eventCreationForm",
+  passport.authenticate("jwt", { session: false }),
+  user_event_controller.getEventCreation
+);
 
 //mobileUser will host an event by using this route
 var cpUpload = uploadStrategy.fields([
@@ -18,46 +21,49 @@ router.post(
   "/addEvent",
   [
     passport.authenticate("jwt", { session: false }),
-    function (req, res,next) {
-        cpUpload(req, res, function (err) {
-            if (err instanceof multer.MulterError) {
-                return res.json({ status: false, message: err.message });
-              } else if (err) {
-                return  res.json({ status: false, message: err });
-              }
-          next();
-        })
-    }
-      
+    function (req, res, next) {
+      cpUpload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+          return res.json({ status: false, message: err.message });
+        } else if (err) {
+          return res.json({ status: false, message: err });
+        }
+        next();
+      });
+    },
   ],
   user_event_controller.addEvent
 );
 
 //mobileUser will get all events for all particular area nad category and price range and also for particular date
-router.post("/getEvents",user_event_controller.getAllEvents);
+router.post("/getEvents", user_event_controller.getAllEvents);
 
-router.post("/getEventDetail",user_event_controller.getEventDetail);
-
+router.post("/getEventDetail", user_event_controller.getEventDetail);
 
 //mobileUser rememberes
 var uploadImageInGallery = uploadStrategy.fields([
   { name: "gallery", maxCount: 1 },
 ]);
 
-router.post("/addMediaInEventGallery", [
-  // passport.authenticate("jwt", { session: false }),
-  function (req, res,next) {
-    uploadImageInGallery(req, res, function (err) {
-          if (err instanceof multer.MulterError) {
-              return res.json({ status: false, message: err.message });
-            } else if (err) {
-              return  res.json({ status: false, message: err });
-            }
+router.post(
+  "/addMediaInEventGallery",
+  [
+    // passport.authenticate("jwt", { session: false }),
+    function (req, res, next) {
+      uploadImageInGallery(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+          return res.json({ status: false, message: err.message });
+        } else if (err) {
+          return res.json({ status: false, message: err });
+        }
         next();
-      })
-  }
-    
-],user_event_controller.addMediaInEventGallery);
+      });
+    },
+  ],
+  user_event_controller.addMediaInEventGallery
+);
+
+router.post("/deleteEventMedia", user_event_controller.deleteEventMedia);
 
 //mobileUser will get all favorites route by using this route
 router.get("/getFavoriteEvents");

@@ -157,7 +157,57 @@ exports.addMediaInEventGallery = async (req, res) => {
         .status(404)
         .json({ status: false, message: "Event  not found" });
     }
-    res.json({ success: true, message: "Successfully updated",newImageKey: newImageKey });
+    res.json({
+      success: true,
+      message: "Successfully updated",
+      newImageKey: newImageKey,
+    });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+exports.deleteEventMedia = async (req, res) => {
+  try {
+    const { deleteMedia } = require("../../helper/imageS3.helper");
+    const mediaKey = req.body.mediaKey;
+    deleteMedia(req.body.mediaKey, function (data) {
+      {
+        if (data.status === false) {
+          res.status(500).json({ status: false, message: data.message });
+        }
+        const Event = req.models.eventModel;
+        const eventId = req.body.eventId;
+        Event.findById({ _id: eventId })
+          .then((eventData) => {
+            const updatedList = eventData.eventGallery.filter(
+              (eventMedia) => eventMedia.mediaKey !== mediaKey
+            );
+            Event.findByIdAndUpdate(
+              { _id: eventId },
+              { eventGallery: updatedList },
+              { new: true }
+            ).then((updatedEvent) => {
+              if (!updatedEvent) {
+                return res
+                  .status(404)
+                  .json({ status: false, message: "Event  not found" });
+              }
+              res.json({
+                success: true,
+                message: "Successfully Deleted",
+                updatedList: updatedList,
+              });
+            }).catch((err)=>{
+              res.status(500).json({ status: false, message: err.message });
+            })
+          })
+          .catch((err) => {
+            res.status(500).json({ status: false, message: err.message,kind:err.kind });
+
+          });
+      }
+    });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
