@@ -81,7 +81,6 @@ exports.addEvent = async (req, res) => {
 };
 
 exports.getAllEvents = async (req, res) => {
-  const { getFileStream } = require("../../helper/imageS3.helper");
 
   console.log(req.body);
   const reqBody = req.body;
@@ -90,9 +89,18 @@ exports.getAllEvents = async (req, res) => {
   try {
     let eventsList = await Event.find({
       "venue.city": cityName,
-      hostedDate: { $gte: Date.now(),
-      status:true },
-    }).sort({ updatedAt: "desc" });
+      hostedDate: { $gte: Date.now(),},
+      status:false 
+    },{
+      title:1,
+      eventThumbNail:1,
+      eventCharges:1,
+      hostedDate:1,
+      category:1,
+      finalisedMembers:1,
+      tags:1
+    },).populate('category','category_name').populate('finalisedMembers',).populate('tags','tag_name')
+    .sort({ updatedAt: "desc" });
     res
       .status(200)
       .json({ status: true, message: "All List Fetched", eventsList });
