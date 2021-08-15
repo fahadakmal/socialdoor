@@ -12,6 +12,11 @@ const address = new Schema({
   coordinates: { type: String },
 });
 
+const eventMedia=new Schema({
+    status:{type:Boolean,default:true},
+    mediaKey:{type:String,required:true}
+})
+
 const eventSchema = new Schema(
   {
     title: {
@@ -52,7 +57,7 @@ const eventSchema = new Schema(
       ref: "EventPaymentDetail",
     },
     eventThumbNail: { type: String, required: true },
-    eventGallery: [{ type: Schema.Types.ObjectId, ref: "EventMedia" }],
+    eventGallery: [eventMedia],
     description: {
       type: String,
       required: true,

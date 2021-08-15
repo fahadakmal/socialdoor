@@ -81,26 +81,31 @@ exports.addEvent = async (req, res) => {
 };
 
 exports.getAllEvents = async (req, res) => {
-
   console.log(req.body);
   const reqBody = req.body;
   const cityName = reqBody.cityName;
   const Event = req.models.eventModel;
   try {
-    let eventsList = await Event.find({
-      "venue.city": cityName,
-      hostedDate: { $gte: Date.now(),},
-      status:false 
-    },{
-      title:1,
-      eventThumbNail:1,
-      eventCharges:1,
-      hostedDate:1,
-      category:1,
-      finalisedMembers:1,
-      tags:1
-    },).populate('category','category_name').populate('finalisedMembers',).populate('tags','tag_name')
-    .sort({ updatedAt: "desc" });
+    let eventsList = await Event.find(
+      {
+        "venue.city": cityName,
+        hostedDate: { $gte: Date.now() },
+        status: false,
+      },
+      {
+        title: 1,
+        eventThumbNail: 1,
+        eventCharges: 1,
+        hostedDate: 1,
+        category: 1,
+        finalisedMembers: 1,
+        tags: 1,
+      }
+    )
+      .populate("category", "category_name")
+      .populate("finalisedMembers")
+      .populate("tags", "tag_name")
+      .sort({ updatedAt: "desc" });
     res
       .status(200)
       .json({ status: true, message: "All List Fetched", eventsList });
@@ -113,20 +118,46 @@ exports.getEventDetail = async (req, res) => {
   const eventId = req.body.eventId;
   const Event = req.models.eventModel;
   try {
-    let eventData = await Event.find({ _id: eventId,  hostedDate: { $gte: Date.now()  }})
+    let eventData = await Event.find({
+      _id: eventId,
+      hostedDate: { $gte: Date.now() },
+    })
       .populate("rules")
       .populate("prefrences")
       .populate("amenities")
-      .populate('category')
-      .populate('host')
-      ;
-      if (!eventData) {
-        return res
-          .status(404)
-          .json({ status: false, message: "Event  not found" });
-      }    res
+      .populate("category")
+      .populate("host");
+    if (!eventData) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Event  not found" });
+    }
+    res
       .status(200)
       .json({ status: true, message: "Event Detail Fetched", eventData });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+exports.addMediaInEventGallery = async (req, res) => {
+  const Event = req.models.eventModel;
+  const eventId = req.body.eventId;
+  const newImageKey = req.files.gallery[0].key;
+  try {
+    const prevEventData = await Event.findById({ _id: eventId });
+    prevEventData.eventGallery.push({ mediaKey: newImageKey });
+    const updatedEvent = await Event.findByIdAndUpdate(
+      { _id: eventId },
+      { eventGallery: prevEventData.eventGallery },
+      { new: true }
+    );
+    if (!updatedEvent) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Event  not found" });
+    }
+    res.json({ success: true, message: "Successfully updated",newImageKey: newImageKey });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }

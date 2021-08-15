@@ -40,7 +40,24 @@ router.post("/getEventDetail",user_event_controller.getEventDetail);
 
 
 //mobileUser rememberes
-router.post("/updateEvents");
+var uploadImageInGallery = uploadStrategy.fields([
+  { name: "gallery", maxCount: 1 },
+]);
+
+router.post("/addMediaInEventGallery", [
+  // passport.authenticate("jwt", { session: false }),
+  function (req, res,next) {
+    uploadImageInGallery(req, res, function (err) {
+          if (err instanceof multer.MulterError) {
+              return res.json({ status: false, message: err.message });
+            } else if (err) {
+              return  res.json({ status: false, message: err });
+            }
+        next();
+      })
+  }
+    
+],user_event_controller.addMediaInEventGallery);
 
 //mobileUser will get all favorites route by using this route
 router.get("/getFavoriteEvents");
