@@ -36,6 +36,9 @@ router.post(
 //mobileUser will get all events for all particular area nad category and price range and also for particular date
 router.post("/getEvents",user_event_controller.getAllEvents);
 
+router.post("/getEventDetail",user_event_controller.getEventDetail);
+
+
 //mobileUser rememberes
 router.post("/updateEvents");
 

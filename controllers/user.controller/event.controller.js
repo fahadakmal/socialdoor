@@ -52,14 +52,14 @@ exports.addEvent = async (req, res) => {
       title: reqBody.title,
       category: reqBody.category,
       hostedDate: reqBody.hostedDate,
-      startTime:reqBody.startTime,
-      endTime:reqBody.endTime,
+      startTime: reqBody.startTime,
+      endTime: reqBody.endTime,
       eventPhone: reqBody.eventPhone,
       eventEmailAddress: reqBody.eventEmailAddress,
       eventCharges: reqBody.eventCharges,
       host: reqBody.host,
       volume: reqBody.volume,
-      rules:reqBody.rules,
+      rules: reqBody.rules,
       prefrences: reqBody.prefrences,
       amenities: reqBody.amenities,
       userInstructions: reqBody.userInstructions,
@@ -80,26 +80,46 @@ exports.addEvent = async (req, res) => {
   }
 };
 
-
-
-exports.getAllEvents=async (req,res,) =>{
-  const {getFileStream}=require('../../helper/imageS3.helper')
+exports.getAllEvents = async (req, res) => {
+  const { getFileStream } = require("../../helper/imageS3.helper");
 
   console.log(req.body);
-  const reqBody=req.body;
-  const cityName=reqBody.cityName;
+  const reqBody = req.body;
+  const cityName = reqBody.cityName;
   const Event = req.models.eventModel;
   try {
-    let eventsList = await Event.find({"venue.city":cityName,hostedDate:{$gte:Date.now()}})
-      .sort({ updatedAt: "desc" });
+    let eventsList = await Event.find({
+      "venue.city": cityName,
+      hostedDate: { $gte: Date.now(),
+      status:true },
+    }).sort({ updatedAt: "desc" });
     res
       .status(200)
       .json({ status: true, message: "All List Fetched", eventsList });
   } catch (error) {
-    res
-      .status(500)
-      .json({ status: false,  message: error.message });
+    res.status(500).json({ status: false, message: error.message });
   }
-     
+};
 
-}
+exports.getEventDetail = async (req, res) => {
+  const eventId = req.body.eventId;
+  const Event = req.models.eventModel;
+  try {
+    let eventData = await Event.find({ _id: eventId,  hostedDate: { $gte: Date.now()  }})
+      .populate("rules")
+      .populate("prefrences")
+      .populate("amenities")
+      .populate('category')
+      .populate('host')
+      ;
+      if (!eventData) {
+        return res
+          .status(404)
+          .json({ status: false, message: "Event  not found" });
+      }    res
+      .status(200)
+      .json({ status: true, message: "Event Detail Fetched", eventData });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
