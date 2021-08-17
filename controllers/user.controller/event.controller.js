@@ -126,7 +126,12 @@ exports.getEventDetail = async (req, res) => {
       .populate("prefrences")
       .populate("amenities")
       .populate("category")
-      .populate("host");
+      .populate("host")
+      .populate("eventGallery")
+      .populate('refralCode')
+      .populate('refralUsed')
+
+
     if (!eventData) {
       return res
         .status(404)
