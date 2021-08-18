@@ -65,6 +65,8 @@ router.post(
 
 router.post("/deleteEventMedia", user_event_controller.deleteEventMedia);
 router.post("/shareEvent", user_event_controller.shareEvent);
+router.post('/applyRefralCode',user_event_controller.applyRefralCode)
+router.post('/addInRefralUsed',user_event_controller.addInRefralUsed)
 
 
 //mobileUser will get all favorites route by using this route

@@ -25,6 +25,15 @@ const RefralCode = new Schema(
       refralLimit:{type:Number,default:5}
   },{timestamps: true});
 
+  const RefralUsed = new Schema(
+    {
+        eventId:{type:Schema.Types.ObjectId,ref:'EventModel'},
+        refralUsers:[{type:Schema.Types.ObjectId,ref:'User'}],
+        refralCode:{type:String,required:true},
+        refralUsed:{type:Number,},
+    },{timestamps: true});
+  
+
 const eventSchema = new Schema(
   {
     title: {
@@ -50,7 +59,7 @@ const eventSchema = new Schema(
       ref: "CancellationPolicy",
     },
     refralCodes: [RefralCode],
-    refralUsed: [{ type: Schema.Types.ObjectId, ref: "RefralUsed" }],
+    refralUsed: [RefralUsed],
     finalisedMembers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     eventWallet: { type: Schema.Types.ObjectId, ref: "EventWallet" },
     eventCharges: { type: Number, required: true },
