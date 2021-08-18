@@ -90,7 +90,7 @@ exports.getAllEvents = async (req, res) => {
       {
         "venue.city": cityName,
         hostedDate: { $gte: Date.now() },
-        status: false,
+        status: true,
       },
       {
         title: 1,
