@@ -128,10 +128,8 @@ exports.getEventDetail = async (req, res) => {
       .populate("category")
       .populate("host")
       .populate("eventGallery")
-      .populate('refralCode')
-      .populate('refralUsed')
-
-
+      .populate("refralCode")
+      .populate("refralUsed");
     if (!eventData) {
       return res
         .status(404)
@@ -192,27 +190,76 @@ exports.deleteEventMedia = async (req, res) => {
               { _id: eventId },
               { eventGallery: updatedList },
               { new: true }
-            ).then((updatedEvent) => {
-              if (!updatedEvent) {
-                return res
-                  .status(404)
-                  .json({ status: false, message: "Event  not found" });
-              }
-              res.json({
-                success: true,
-                message: "Successfully Deleted",
-                updatedList: updatedList,
+            )
+              .then((updatedEvent) => {
+                if (!updatedEvent) {
+                  return res
+                    .status(404)
+                    .json({ status: false, message: "Event  not found" });
+                }
+                res.json({
+                  success: true,
+                  message: "Successfully Deleted",
+                  updatedList: updatedList,
+                });
+              })
+              .catch((err) => {
+                res.status(500).json({ status: false, message: err.message });
               });
-            }).catch((err)=>{
-              res.status(500).json({ status: false, message: err.message });
-            })
           })
           .catch((err) => {
-            res.status(500).json({ status: false, message: err.message,kind:err.kind });
-
+            res
+              .status(500)
+              .json({ status: false, message: err.message, kind: err.kind });
           });
       }
     });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+exports.shareEvent = async (req, res) => {
+  const userId = req.body.userId;
+  const eventId = req.body.eventId;
+  const reverseUserId = userId.split("").reverse().join("");
+  const reverseEventId = eventId.split("").reverse().join("");
+  const refralCodeString = reverseUserId + reverseEventId;
+  const Event = req.models.eventModel;
+  try {
+    const prevEventData = await Event.findById({ _id: eventId }).populate(
+      "refralCodes"
+    );
+    const alreadyExist = (refralEntity) =>
+      refralEntity.userId == userId && refralEntity.eventId == eventId;
+
+    if (prevEventData.refralCodes.some(alreadyExist) === false) {
+      prevEventData.refralCodes.push({
+        userId: userId,
+        eventId: eventId,
+        refralCodeString: refralCodeString,
+      });
+      const updatedEvent = await Event.findByIdAndUpdate(
+        { _id: eventId },
+        { refralCodes: prevEventData.refralCodes },
+        { new: true }
+      );
+      if (!updatedEvent) {
+        return res
+          .status(404)
+          .json({ status: false, message: "Event  not found" });
+      }
+      res.json({
+        success: true,
+        message: "Successfully added refralCode",
+        newImageKey: refralCodeString,
+      });
+    } else {
+      res.json({
+        success: false,
+        message: "Refral code already exist",
+      });
+    }
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }

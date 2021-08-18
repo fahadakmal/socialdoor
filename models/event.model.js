@@ -17,6 +17,14 @@ const eventMedia=new Schema({
     mediaKey:{type:String,required:true}
 })
 
+const RefralCode = new Schema(
+  {
+      eventId:{type:Schema.Types.ObjectId,ref:'EventModel'},
+      userId:{type:Schema.Types.ObjectId,ref:'User'},
+      refralCodeString:{type:String,required:true},
+      refralLimit:{type:Number,default:5}
+  },{timestamps: true});
+
 const eventSchema = new Schema(
   {
     title: {
@@ -41,7 +49,7 @@ const eventSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "CancellationPolicy",
     },
-    refralCode: [{ type: Schema.Types.ObjectId, ref: "RefralCode" }],
+    refralCodes: [RefralCode],
     refralUsed: [{ type: Schema.Types.ObjectId, ref: "RefralUsed" }],
     finalisedMembers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     eventWallet: { type: Schema.Types.ObjectId, ref: "EventWallet" },

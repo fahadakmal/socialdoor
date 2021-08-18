@@ -64,6 +64,8 @@ router.post(
 );
 
 router.post("/deleteEventMedia", user_event_controller.deleteEventMedia);
+router.post("/shareEvent", user_event_controller.shareEvent);
+
 
 //mobileUser will get all favorites route by using this route
 router.get("/getFavoriteEvents");
