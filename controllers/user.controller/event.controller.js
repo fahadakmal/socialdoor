@@ -252,12 +252,14 @@ exports.shareEvent = async (req, res) => {
       res.json({
         success: true,
         message: "Successfully added refralCode",
-        newImageKey: refralCodeString,
+        refralCodeString: refralCodeString,
       });
     } else {
       res.json({
         success: false,
         message: "Refral code already exist",
+        refralCodeString: refralCodeString,
+
       });
     }
   } catch (error) {
