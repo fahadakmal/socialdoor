@@ -17,21 +17,8 @@ const eventMedia=new Schema({
     mediaKey:{type:String,required:true}
 })
 
-const RefralCode = new Schema(
-  {
-      eventId:{type:Schema.Types.ObjectId,ref:'EventModel'},
-      userId:{type:Schema.Types.ObjectId,ref:'User'},
-      refralCodeString:{type:String,required:true},
-      refralLimit:{type:Number,default:5}
-  },{timestamps: true});
 
-  const RefralUsed = new Schema(
-    {
-        eventId:{type:Schema.Types.ObjectId,ref:'EventModel'},
-        refralUsers:[{type:Schema.Types.ObjectId,ref:'User'}],
-        refralCode:{type:String,required:true},
-        refralUsed:{type:Number,},
-    },{timestamps: true});
+
   
 
 const eventSchema = new Schema(
@@ -58,8 +45,8 @@ const eventSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "CancellationPolicy",
     },
-    refralCodes: [RefralCode],
-    refralUsed: [RefralUsed],
+    refralCodes: [{ type: Schema.Types.ObjectId, ref: "RefralCodes" }],
+    refralUsed: [{ type: Schema.Types.ObjectId, ref: "RefralUsed" }],
     finalisedMembers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     eventWallet: { type: Schema.Types.ObjectId, ref: "EventWallet" },
     eventCharges: { type: Number, required: true },

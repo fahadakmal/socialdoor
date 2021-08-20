@@ -116,6 +116,8 @@ exports.getAllEvents = async (req, res) => {
 
 exports.getEventDetail = async (req, res) => {
   const eventId = req.body.eventId;
+  const userId = req.body.userId;
+  console.log("i m in");
   const Event = req.models.eventModel;
   try {
     let eventData = await Event.find({
@@ -127,17 +129,18 @@ exports.getEventDetail = async (req, res) => {
       .populate("amenities")
       .populate("category")
       .populate("host")
-      .populate("eventGallery")
-      .populate("refralCode")
-      .populate("refralUsed");
+      .populate("eventGallery");
     if (!eventData) {
       return res
         .status(404)
         .json({ status: false, message: "Event  not found" });
     }
+    let data = eventData[0].refralUsed.filter(
+      (fata) => fata.refrerId === userId
+    );
     res
       .status(200)
-      .json({ status: true, message: "Event Detail Fetched", eventData });
+      .json({ status: true, message: "Event Detail Fetched", data });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
@@ -226,42 +229,51 @@ exports.shareEvent = async (req, res) => {
   const reverseEventId = eventId.split("").reverse().join("");
   const refralCodeString = reverseUserId + reverseEventId;
   const Event = req.models.eventModel;
-  try {
-    const prevEventData = await Event.findById({ _id: eventId }).populate(
-      "refralCodes"
-    );
-    const alreadyExist = (refralEntity) =>
-      refralEntity.userId == userId && refralEntity.eventId == eventId;
+  const RefralCode = req.models.refralCodeModel;
 
-    if (prevEventData.refralCodes.some(alreadyExist) === false) {
-      prevEventData.refralCodes.push({
-        userId: userId,
-        eventId: eventId,
-        refralCodeString: refralCodeString,
-      });
-      const updatedEvent = await Event.findByIdAndUpdate(
-        { _id: eventId },
-        { refralCodes: prevEventData.refralCodes },
-        { new: true }
-      );
-      if (!updatedEvent) {
-        return res
-          .status(404)
-          .json({ status: false, message: "Event  not found" });
-      }
+  try {
+    const dbRefralCode = await RefralCode.findOne({
+      refralCodeString: refralCodeString,
+    });
+    if (dbRefralCode) {
       res.json({
         success: true,
-        message: "Successfully added refralCode",
-        refralCodeString: refralCodeString,
+        message: "Refral code already exist",
+        refralCodeString: dbRefralCode,
       });
-    } else {
+      return;
+    }
+    const newRefralCode = new RefralCode({
+      userId: userId,
+      eventId: eventId,
+      refralCodeString: refralCodeString,
+    });
+    const refCode = await newRefralCode.save();
+    if (!refCode) {
       res.json({
         success: false,
-        message: "Refral code already exist",
-        refralCodeString: refralCodeString,
-
+        message: "Unable to save new refral code",
       });
+      return;
     }
+    const eventSaved = await Event.findByIdAndUpdate(
+      eventId,
+      { $push: { refralCodes: refCode._id } },
+      { new: true, useFindAndModify: false }
+    );
+    if (!eventSaved) {
+      res.json({
+        success: false,
+        message: "Unable to save new code in event",
+        refralCodeString: refCode,
+      });
+      return;
+    }
+    res.json({
+      success: true,
+      message: "Refral Code  Successfully saved in event",
+      refralCodeString: refCode,
+    });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
@@ -269,28 +281,28 @@ exports.shareEvent = async (req, res) => {
 
 exports.applyRefralCode = async (req, res) => {
   const refralCode = req.body.refralCode;
-  const eventId = req.body.eventId;
-  const Event = req.models.eventModel;
+  const RefralCode = req.models.refralCodeModel;
+
   try {
-    const eventRefralCodeExist = await Event.findOne(
+    const dbRefralCode = await RefralCode.findOne(
       {
-        "refralCodes.refralCodeString": refralCode,
-        "refralCodes.eventId": eventId,
+        refralCodeString: refralCode,
       },
-      { "refralCodes._id": 1, _id: 0 }
+      { createdAt: 0, updatedAt: 0 }
     );
 
-    console.log(eventRefralCodeExist);
-    if (!eventRefralCodeExist) {
+    console.log(dbRefralCode);
+    if (!dbRefralCode) {
       res.status(201).json({
         status: true,
         message: "Refral Code Not Exist",
       });
+      return;
     }
     res.status(201).json({
       status: true,
       message: "Refral Code Exist",
-      redralCodes: eventRefralCodeExist.refralCodes[0]._id,
+      refralCode: dbRefralCode,
       refralCodeExist: true,
     });
   } catch (error) {
@@ -299,52 +311,77 @@ exports.applyRefralCode = async (req, res) => {
 };
 
 exports.addInRefralUsed = async (req, res) => {
-  const eventId = req.body.eventId;
-  const refralCode = req.body.refralCode;
-  const userId = req.body.userId;
+  const RefralUsed = req.models.refralUsedModel;
   const Event = req.models.eventModel;
+  const refralCode = req.body.refralCode;
+  const refrerId = req.body.refrerId;
+  const userId = req.body.userId;
+  const eventId = req.body.eventId;
+
   try {
-    const { refralUsed } = await Event.findOne(
-      { _id: eventId },
-      { refralUsed: 1 }
-    );
-    const alreadyExistedRefralUsed = refralUsed.filter(
-      (refralUsedEntity) => refralUsedEntity.refralCode == refralCode
-    );
-    if (alreadyExistedRefralUsed.length !== 0) {
-      refralUsed
-        .filter((refralUsedEntity) => refralUsedEntity.refralCode == refralCode)
-        .forEach((singleEntity) => {
-                 singleEntity.refralUsers.push(userId)
-                 singleEntity.refralUsed=   singleEntity.refralUsed+1
-        })
-        
-    } else {
-      const refralUseList = [userId];
-      refralUsed.push({
-        eventId: eventId,
-        refralUsers: refralUseList,
+    console.log('i am in');
+    const dbRefralUsed = await RefralUsed.findOne({ refralCode: refralCode });
+    if (!dbRefralUsed) {
+      const newRefralUsed = new RefralUsed({
         refralCode: refralCode,
-        refralUsed: 1,
+        refrerId: refrerId,
+        eventId: eventId,
+        refralUsers: [userId],
+        refralUsedCount: 1,
       });
+      const addedRefralUsed = await newRefralUsed.save();
+      if (!addedRefralUsed) {
+        res.status(200).json({
+          status: false,
+          message: "Refral Code Not added",
+        });
+        return;
+      } else {
+        const addedInEvent = await Event.findByIdAndUpdate(
+          { _id: eventId },
+          {
+            $push: { refralUsed: addedRefralUsed._id },
+          }
+        );
+        if (!addedInEvent) {
+          res.status(200).json({
+            status: false,
+            message: "Refral Code Not added in event",
+          });
+          return;
+        }
+        res.status(200).json({
+          status: true,
+          message: "Refral  added in successfully",
+          refralData:addedRefralUsed
+        });
+        return;
+
+      }
     }
-    const updatedEvent = await Event.findByIdAndUpdate(
-      { _id: eventId },
-      { refralUsed: refralUsed },
+    const updatedRefralUsed = await RefralUsed.findOneAndUpdate(
+      { refralCode: refralCode },
+      {
+        $push: { refralUsers: userId },
+        refralUsedCount: dbRefralUsed.refralUsedCount + 1,
+      },
       { new: true }
     );
-    if (!updatedEvent) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Event  not found" });
+    if (!updatedRefralUsed) {
+      res.status(200).json({
+        status: false,
+        message: "Refral Code Not updated",
+      });
+      return;
     }
-    res.json({
-      success: true,
-      message: "Successfully added refralCode",
-      refralUsed:refralUsed
+    res.status(200).json({
+      status: true,
+      message: "Refral Code Successfully updated",
+      refralData:updatedRefralUsed
     });
+    return;
+
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
-
   }
 };
