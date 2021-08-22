@@ -69,6 +69,8 @@ exports.addEvent = async (req, res) => {
       paypalToken: reqBody.paypalToken,
       eventThumbNail: req.files.eventThumbNail[0].key,
     });
+    console.log(newEvent);
+    console.log(newEvent);
     await newEvent.save();
     res.status(201).json({
       status: true,
@@ -129,18 +131,16 @@ exports.getEventDetail = async (req, res) => {
       .populate("amenities")
       .populate("category")
       .populate("host")
-      .populate("eventGallery");
+      .populate({path:"refralCodes",match:{userId:userId}})
+      .populate({path:"refralUsed",match:{refrerId:userId}}); 
     if (!eventData) {
       return res
         .status(404)
         .json({ status: false, message: "Event  not found" });
     }
-    let data = eventData[0].refralUsed.filter(
-      (fata) => fata.refrerId === userId
-    );
     res
       .status(200)
-      .json({ status: true, message: "Event Detail Fetched", data });
+      .json({ status: true, message: "Event Detail Fetched", eventData });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
@@ -385,3 +385,6 @@ exports.addInRefralUsed = async (req, res) => {
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
+
+
