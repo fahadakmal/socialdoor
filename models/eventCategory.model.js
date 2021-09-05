@@ -10,5 +10,3 @@ const CategorySchema = new Schema({
  
 
  module.exports = new mongoose.model('EventCategory', CategorySchema);
-
- 

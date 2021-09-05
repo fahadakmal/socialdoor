@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const multer = require("multer");
+const upload = multer({ dest: 'uploads/' })
 const { user_event_controller } = require("../../controllers/user.controller");
-const { uploadStrategy } = require("../../helper/imageS3.helper");
 const passport = require("passport");
 
 //below ropute is used to create route,
@@ -12,26 +12,10 @@ router.post(
 );
 
 //mobileUser will host an event by using this route
-var cpUpload = uploadStrategy.fields([
-  { name: "eventThumbNail", maxCount: 1 },
-  { name: "gallery", maxCount: 8 },
-]);
-
 router.post(
-  "/addEvent",
-  [
+  "/addEvent",[
     passport.authenticate("jwt", { session: false }),
-    function (req, res, next) {
-      cpUpload(req, res, function (err) {
-        if (err instanceof multer.MulterError) {
-          return res.json({ status: false, message: err.message });
-        } else if (err) {
-          return res.json({ status: false, message: err });
-        }
-        next();
-      });
-    },
-  ],
+  upload.single('eventThumbNail'),],
   user_event_controller.addEvent
 );
 
@@ -41,25 +25,21 @@ router.post("/getEvents", user_event_controller.getAllEvents);
 router.post("/getEventDetail", user_event_controller.getEventDetail);
 
 //mobileUser rememberes
-var uploadImageInGallery = uploadStrategy.fields([
-  { name: "gallery", maxCount: 1 },
-]);
-
 router.post(
   "/addMediaInEventGallery",
-  [
-    // passport.authenticate("jwt", { session: false }),
-    function (req, res, next) {
-      uploadImageInGallery(req, res, function (err) {
-        if (err instanceof multer.MulterError) {
-          return res.json({ status: false, message: err.message });
-        } else if (err) {
-          return res.json({ status: false, message: err });
-        }
-        next();
-      });
-    },
-  ],
+  // [
+  //   // passport.authenticate("jwt", { session: false }),
+  //   function (req, res, next) {
+  //     uploadImageInGallery(req, res, function (err) {
+  //       if (err instanceof multer.MulterError) {
+  //         return res.json({ status: false, message: err.message });
+  //       } else if (err) {
+  //         return res.json({ status: false, message: err });
+  //       }
+  //       next();
+  //     });
+  //   },
+  // ],
   user_event_controller.addMediaInEventGallery
 );
 

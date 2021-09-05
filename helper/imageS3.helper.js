@@ -1,7 +1,6 @@
 const S3 = require("aws-sdk/clients/s3");
 const fs = require("fs");
 var multer = require("multer");
-var multerS3 = require("multer-s3");
 const path = require("path");
 const { nextTick } = require("process");
 const config = require("../config/keys.config");
@@ -60,13 +59,6 @@ const fileFilter = (req, file, cb) => {
 //below strategy is used to upload to s3
 
 exports.uploadStrategy = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: bucketName,
-    metadata: function (req, file, cb) {
-      cb(null, { fieldName: file.fieldname });
-    },
-  }),
   limits: { fileSize: 1000000 },
   fileFilter: fileFilter,
 });

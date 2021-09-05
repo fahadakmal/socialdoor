@@ -45,38 +45,57 @@ exports.getEventCreation = async (req, res) => {
 };
 
 exports.addEvent = async (req, res) => {
+  const { uploadFile } = require("../../helper/imageS3.helper");
+  const fs=require('fs');
+  const util=require('util');
+  const unLinkFile=util.promisify(fs.unlink)
   const Event = req.models.eventModel;
+  const reqBody = req.body;
   try {
-    const reqBody = JSON.parse(req.body.data);
-    const newEvent = new Event({
-      title: reqBody.title,
-      category: reqBody.category,
-      hostedDate: reqBody.hostedDate,
-      startTime: reqBody.startTime,
-      endTime: reqBody.endTime,
-      eventPhone: reqBody.eventPhone,
-      eventEmailAddress: reqBody.eventEmailAddress,
-      eventCharges: reqBody.eventCharges,
-      host: reqBody.host,
-      volume: reqBody.volume,
-      rules: reqBody.rules,
-      prefrences: reqBody.prefrences,
-      amenities: reqBody.amenities,
-      userInstructions: reqBody.userInstructions,
-      cancelInstructions: reqBody.cancelInstructions,
-      venue: reqBody.venue,
-      description: reqBody.description,
-      paypalToken: reqBody.paypalToken,
-      eventThumbNail: req.files.eventThumbNail[0].key,
-    });
-    console.log(newEvent);
-    console.log(newEvent);
-    await newEvent.save();
-    res.status(201).json({
-      status: true,
-      message: "Event addedd successfully",
-      newEvent: newEvent,
-    });
+    const eventThumNail = req.file;
+    if (
+      eventThumNail.mimetype === "image/jpeg" ||
+      eventThumNail.mimetype === "image/png" &&
+      eventThumNail.size <= 1000000
+    ) {
+      const result = await uploadFile(eventThumNail);
+      const newEvent = new Event({
+        title: reqBody.title,
+        category: reqBody.category,
+        hostedDate: reqBody.hostedDate,
+        startTime: reqBody.startTime,
+        endTime: reqBody.endTime,
+        eventPhone: reqBody.eventPhone,
+        eventEmailAddress: reqBody.eventEmailAddress,
+        eventCharges: reqBody.eventCharges,
+        host: reqBody.host,
+        volume: reqBody.volume,
+        rules: reqBody.rules,
+        prefrences: reqBody.prefrences,
+        amenities: reqBody.amenities,
+        userInstructions: reqBody.userInstructions,
+        cancelInstructions: reqBody.cancelInstructions,
+        venue: reqBody.venue,
+        description: reqBody.description,
+        paypalToken: reqBody.paypalToken,
+        eventThumbNail: result.key,
+      });
+      await newEvent.save();
+      await unLinkFile(eventThumNail.path)
+      res.status(201).json({
+        status: true,
+        message: "Event addedd successfully",
+        newEvent: newEvent,
+      });
+    } else {
+      await unLinkFile(eventThumNail.path)
+      res
+        .status(500)
+        .json({
+          status: false,
+          message: "File should be image and size should be lower than 5 MB",
+        });
+    }
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
@@ -131,8 +150,8 @@ exports.getEventDetail = async (req, res) => {
       .populate("amenities")
       .populate("category")
       .populate("host")
-      .populate({path:"refralCodes",match:{userId:userId}})
-      .populate({path:"refralUsed",match:{refrerId:userId}}); 
+      .populate({ path: "refralCodes", match: { userId: userId } })
+      .populate({ path: "refralUsed", match: { refrerId: userId } });
     if (!eventData) {
       return res
         .status(404)
@@ -319,7 +338,7 @@ exports.addInRefralUsed = async (req, res) => {
   const eventId = req.body.eventId;
 
   try {
-    console.log('i am in');
+    console.log("i am in");
     const dbRefralUsed = await RefralUsed.findOne({ refralCode: refralCode });
     if (!dbRefralUsed) {
       const newRefralUsed = new RefralUsed({
@@ -353,10 +372,9 @@ exports.addInRefralUsed = async (req, res) => {
         res.status(200).json({
           status: true,
           message: "Refral  added in successfully",
-          refralData:addedRefralUsed
+          refralData: addedRefralUsed,
         });
         return;
-
       }
     }
     const updatedRefralUsed = await RefralUsed.findOneAndUpdate(
@@ -377,14 +395,12 @@ exports.addInRefralUsed = async (req, res) => {
     res.status(200).json({
       status: true,
       message: "Refral Code Successfully updated",
-      refralData:updatedRefralUsed
+      refralData: updatedRefralUsed,
     });
     return;
-
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
 };
 
-
-
+exports.joinEvent = () => {};
