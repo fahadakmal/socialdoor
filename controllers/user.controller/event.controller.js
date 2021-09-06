@@ -50,15 +50,15 @@ exports.addEvent = async (req, res) => {
   const util=require('util');
   const unLinkFile=util.promisify(fs.unlink)
   const Event = req.models.eventModel;
-  const reqBody = req.body;
+  const reqBody=JSON.parse(req.body.data)
+  const eventThumbNail = req.files.eventThumbNail[0];
   try {
-    const eventThumNail = req.file;
     if (
-      eventThumNail.mimetype === "image/jpeg" ||
-      eventThumNail.mimetype === "image/png" &&
-      eventThumNail.size <= 1000000
+      eventThumbNail.mimetype === "image/jpeg" ||
+      eventThumbNail.mimetype === "image/png" &&
+      eventThumbNail.size <= 1000000
     ) {
-      const result = await uploadFile(eventThumNail);
+      const result = await uploadFile(eventThumbNail);
       const newEvent = new Event({
         title: reqBody.title,
         category: reqBody.category,
@@ -81,14 +81,14 @@ exports.addEvent = async (req, res) => {
         eventThumbNail: result.key,
       });
       await newEvent.save();
-      await unLinkFile(eventThumNail.path)
+      await unLinkFile(eventThumbNail.path)
       res.status(201).json({
         status: true,
         message: "Event addedd successfully",
         newEvent: newEvent,
       });
     } else {
-      await unLinkFile(eventThumNail.path)
+      await unLinkFile(eventThumbNail.path)
       res
         .status(500)
         .json({

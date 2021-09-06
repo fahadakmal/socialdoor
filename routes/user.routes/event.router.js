@@ -12,10 +12,12 @@ router.post(
 );
 
 //mobileUser will host an event by using this route
+const cpUpload = upload.fields([{ name: 'eventThumbNail', maxCount: 1 },])
+
 router.post(
   "/addEvent",[
     passport.authenticate("jwt", { session: false }),
-  upload.single('eventThumbNail'),],
+    cpUpload,],
   user_event_controller.addEvent
 );
 
