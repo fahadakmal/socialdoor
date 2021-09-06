@@ -53,10 +53,12 @@ exports.addEvent = async (req, res) => {
   const reqBody = req.body;
   try {
     const eventThumNail = req.file;
+    let b=1;
     if (
-      eventThumNail.mimetype === "image/jpeg" ||
-      eventThumNail.mimetype === "image/png" &&
-      eventThumNail.size <= 1000000
+      // eventThumNail.mimetype === "image/jpeg" ||
+      // eventThumNail.mimetype === "image/png" &&
+      // eventThumNail.size <= 1000000
+      b==1
     ) {
       const result = await uploadFile(eventThumNail);
       const newEvent = new Event({
