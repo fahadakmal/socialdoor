@@ -168,7 +168,7 @@ exports.login = async (req, res) => {
             payload,
             config.jwt.secret,
             {
-              expiresIn: "1 day",
+              expiresIn: "7 day",
             },
             (err, token) => {
               // logning error if existed
@@ -701,7 +701,7 @@ const jwtSignForSocialLogin = (user, config) => {
 
   // Create token if the password matched and no error was thrown.
   const token = jwt.sign(payload, config.jwt.secret, {
-    expiresIn: "1 day",
+    expiresIn: "7 day",
   });
 
   return {
