@@ -9,7 +9,8 @@ const address = new Schema({
   floor: { type: String },
   city: { type: String, required: true },
   postal_code: { type: String, required: true },
-  coordinates: { type: String },
+  latitude: { type: Number },
+  longitude:{type: Number}
 });
 
 const eventMedia=new Schema({
