@@ -78,6 +78,8 @@ exports.addEvent = async (req, res) => {
         venue: reqBody.venue,
         description: reqBody.description,
         paypalToken: reqBody.paypalToken,
+        payerId: reqBody.payerId,
+        paymentId: reqBody.paymentId,
         eventThumbNail: result.key,
       });
       await newEvent.save();
