@@ -51,7 +51,7 @@ const eventSchema = new Schema(
     finalisedMembers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     eventWallet: { type: Schema.Types.ObjectId, ref: "EventWallet" },
     eventCharges: { type: Number, required: true },
-    paymentToken: { type: String, required: true },
+    paypalToken: { type: String, required: true },
     payerId: { type: String, required: true },
     paymentId: { type: String, required: true },
     venue: [address],
