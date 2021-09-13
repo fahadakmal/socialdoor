@@ -112,7 +112,6 @@ exports.getAllEvents = async (req, res) => {
   try {
     let startDate = new Date(reqBody.startDate);
     let endDate = new Date(reqBody.endDate);
-
     let eventsList = await Event.find(
       {
         "venue.city": cityName,
