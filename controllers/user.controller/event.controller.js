@@ -110,10 +110,13 @@ exports.getAllEvents = async (req, res) => {
   const cityName = reqBody.cityName;
   const Event = req.models.eventModel;
   try {
+    let startDate = new Date(reqBody.startDate);
+    let endDate = new Date(reqBody.endDate);
+
     let eventsList = await Event.find(
       {
         "venue.city": cityName,
-        hostedDate: { $gte: Date.now() },
+        $and: [{ hostedDate: { $gt: startDate } }, { hostedDate: { $lte: endDate } }],
         status: true,
       },
       {
