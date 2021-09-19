@@ -46,17 +46,17 @@ exports.getEventCreation = async (req, res) => {
 
 exports.addEvent = async (req, res) => {
   const { uploadFile } = require("../../helper/imageS3.helper");
-  const fs=require('fs');
-  const util=require('util');
-  const unLinkFile=util.promisify(fs.unlink)
+  const fs = require("fs");
+  const util = require("util");
+  const unLinkFile = util.promisify(fs.unlink);
   const Event = req.models.eventModel;
-  const reqBody=JSON.parse(req.body.data)
+  const reqBody = JSON.parse(req.body.data);
   const eventThumbNail = req.files.eventThumbNail[0];
   try {
     if (
       eventThumbNail.mimetype === "image/jpeg" ||
-      eventThumbNail.mimetype === "image/png" &&
-      eventThumbNail.size <= 1000000
+      (eventThumbNail.mimetype === "image/png" &&
+        eventThumbNail.size <= 1000000)
     ) {
       const result = await uploadFile(eventThumbNail);
       const newEvent = new Event({
@@ -83,20 +83,18 @@ exports.addEvent = async (req, res) => {
         eventThumbNail: result.key,
       });
       await newEvent.save();
-      await unLinkFile(eventThumbNail.path)
+      await unLinkFile(eventThumbNail.path);
       res.status(201).json({
         status: true,
         message: "Event addedd successfully",
         newEvent: newEvent,
       });
     } else {
-      await unLinkFile(eventThumbNail.path)
-      res
-        .status(500)
-        .json({
-          status: false,
-          message: "File should be image and size should be lower than 5 MB",
-        });
+      await unLinkFile(eventThumbNail.path);
+      res.status(500).json({
+        status: false,
+        message: "File should be image and size should be lower than 5 MB",
+      });
     }
   } catch (error) {
     console.log(error);
@@ -115,7 +113,10 @@ exports.getAllEvents = async (req, res) => {
     let eventsList = await Event.find(
       {
         "venue.city": cityName,
-        $and: [{ hostedDate: { $gt: startDate } }, { hostedDate: { $lte: endDate } }],
+        $and: [
+          { hostedDate: { $gt: startDate } },
+          { hostedDate: { $lte: endDate } },
+        ],
         status: true,
       },
       {
@@ -409,3 +410,36 @@ exports.addInRefralUsed = async (req, res) => {
 };
 
 exports.joinEvent = () => {};
+
+exports.getHostedEvents = async (req, res) => {
+  const hostId = req.body.hostId;
+  const Event = req.models.eventModel;
+  try {
+    const hostedEvents = await Event.find(
+      { host: hostId },
+      {
+        title: 1,
+        eventThumbNail: 1,
+        eventCharges: 1,
+        hostedDate: 1,
+        category: 1,
+        finalisedMembers: 1,
+        tags: 1,
+        status:1
+      }
+    )
+      .populate("category", "category_name")
+      .populate("finalisedMembers")
+      .populate("tags", "tag_name")
+      .sort({ updatedAt: "desc" });
+    res
+      .status(200)
+      .json({
+        status: true,
+        message: "All Hosted Event Fetched",
+        hostedEvents,
+      });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};

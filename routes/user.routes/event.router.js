@@ -26,6 +26,10 @@ router.post("/getEvents", user_event_controller.getAllEvents);
 
 router.post("/getEventDetail", user_event_controller.getEventDetail);
 
+//get hosted events
+router.post("/getHostedEvents", user_event_controller.getHostedEvents);
+
+
 //mobileUser rememberes
 router.post(
   "/addMediaInEventGallery",
